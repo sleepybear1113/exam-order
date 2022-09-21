@@ -1,4 +1,4 @@
-package cn.xjx.examorder.entity;
+package cn.xiejx.examorder.entity;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;

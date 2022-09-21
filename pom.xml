@@ -8,7 +8,7 @@
         <version>2.7.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>cn.xjx</groupId>
+    <groupId>cn.xiejx</groupId>
     <artifactId>exam-order</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>exam-order</name>
@@ -84,6 +84,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>cn.xiejx.examorder.ExamOrderApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

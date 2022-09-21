@@ -1,4 +1,4 @@
-package cn.xjx.examorder.dbf;
+package cn.xiejx.examorder.dbf;
 
 import com.linuxense.javadbf.DBFReader;
 import com.linuxense.javadbf.DBFRow;

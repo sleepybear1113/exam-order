@@ -1,4 +1,4 @@
-package cn.xjx.examorder.config;
+package cn.xiejx.examorder.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

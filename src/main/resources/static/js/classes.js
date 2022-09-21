@@ -9,6 +9,7 @@ class PersonInfo {
         this.seatNo = props.seatNo;
         this.examNumber = props.examNumber;
         this.examPlaceName = props.examPlaceName;
+        this.idCard = props.idCard;
     }
 }
 

@@ -1,4 +1,4 @@
-package cn.xjx.examorder.entity;
+package cn.xiejx.examorder.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,12 +18,20 @@ import java.util.*;
 @AllArgsConstructor
 public class ExamPlaceInfo {
     private String examPlaceName;
+    private String examPlaceId;
     private List<SubjectInfo> list;
+
+    public ExamPlaceInfo(String examPlaceName, List<SubjectInfo> list) {
+        this.examPlaceName = examPlaceName;
+        this.list = list;
+    }
 
     public static List<ExamPlaceInfo> processPersonByGroup(List<PersonInfo> personInfoList, List<SubjectMaxCount> subjectInfoMaxCountList, Long random) {
         if (CollectionUtils.isEmpty(personInfoList)) {
             return new ArrayList<>();
         }
+
+        // 每个考试科目的最大数量
         Map<String, SubjectMaxCount> subjectInfoMaxCountMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(subjectInfoMaxCountList)) {
             for (SubjectMaxCount subjectMaxCount : subjectInfoMaxCountList) {

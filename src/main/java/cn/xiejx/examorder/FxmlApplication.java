@@ -1,6 +1,6 @@
-package cn.xjx.examorder;
+package cn.xiejx.examorder;
 
-import cn.xjx.examorder.utils.SpringContextUtil;
+import cn.xiejx.examorder.utils.SpringContextUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,8 +15,8 @@ public class FxmlApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 300);
-        stage.setTitle("考点考号编排");
+        Scene scene = new Scene(fxmlLoader.load(), 500, 305);
+        stage.setTitle("考场编排系统");
         stage.setScene(scene);
         stage.show();
     }

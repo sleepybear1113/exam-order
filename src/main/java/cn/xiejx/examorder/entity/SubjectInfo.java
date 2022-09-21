@@ -1,9 +1,10 @@
-package cn.xjx.examorder.entity;
+package cn.xiejx.examorder.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -39,14 +40,15 @@ public class SubjectInfo {
         if (CollectionUtils.isEmpty(personInfoList)) {
             return 0;
         }
-        if (random != null && random > 0) {
+        boolean reset = random != null && random > 0;
+        if (reset) {
             Collections.shuffle(personInfoList, new Random(random));
         }
         List<List<PersonInfo>> partition = ListUtils.partition(personInfoList, getMaxCount());
         examRoomInfoList = new ArrayList<>();
         for (List<PersonInfo> infoList : partition) {
-            String roomNo = String.format("%04d", count);
-            PersonInfo.buildSeatNo(infoList, roomNo);
+            String roomNo = reset || StringUtils.isBlank(infoList.get(0).getRoomNo()) ? String.format("%03d", count) : infoList.get(0).getRoomNo();
+            PersonInfo.buildSeatNo(infoList, roomNo, random);
             ExamRoomInfo examRoomInfo = new ExamRoomInfo(getMaxCount(), infoList);
             examRoomInfo.setRoomName(roomNo);
             count++;

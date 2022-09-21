@@ -1,4 +1,4 @@
-package cn.xjx.examorder.utils;
+package cn.xiejx.examorder.utils;
 
 import org.springframework.context.ConfigurableApplicationContext;
 

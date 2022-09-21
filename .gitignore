@@ -34,3 +34,4 @@ build/
 
 test/
 src/main/resources/static/img/
+/*.json

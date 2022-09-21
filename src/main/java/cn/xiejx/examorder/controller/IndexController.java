@@ -1,13 +1,17 @@
-package cn.xjx.examorder.controller;
+package cn.xiejx.examorder.controller;
 
-import cn.xjx.examorder.entity.*;
-import cn.xjx.examorder.fxml.IndexFxml;
+import cn.xiejx.examorder.entity.*;
+import cn.xiejx.examorder.fxml.IndexFxml;
 import com.alibaba.excel.EasyExcel;
+import javafx.application.Platform;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +31,8 @@ public class IndexController {
             return allExamInfo;
         }
         List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(IndexFxml.personInfoList, IndexFxml.subjectInfoMaxCountList, random);
-        allExamInfo.setList(examPlaceInfoList);
+        allExamInfo.setList(examPlaceInfoList.subList(0, 2));
         allExamInfo.processPicSrc(IndexFxml.picPath);
-        allExamInfo.hidePersonInfo();
 
         AllExamInfo res = new AllExamInfo();
         res.setList(allExamInfo.getList());
@@ -60,16 +63,27 @@ public class IndexController {
                 }
             }
         }
+        if (CollectionUtils.isEmpty(data)) {
+            return false;
+        }
 
-        String fileName = "simpleWrite-" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        // 如果这里想使用03 则 传入excelType参数即可
-        EasyExcel.write(fileName, PersonInfo.class)
-                .sheet("模板")
-                .doWrite(() -> {
-                    // 分页查询数据
-                    return data;
-                });
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("xlsx", "*.xlsx")
+        );
+
+        Platform.runLater(()-> {
+            File file = fileChooser.showSaveDialog(new Stage());
+            if (file == null) {
+                return;
+            }
+            String absolutePath = file.getAbsolutePath();
+
+            EasyExcel.write(absolutePath, PersonInfo.class)
+                    .sheet("模板")
+                    .doWrite(() -> data);
+        });
+
         return true;
     }
 }

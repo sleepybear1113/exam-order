@@ -1,4 +1,4 @@
-package cn.xjx.examorder.utils;
+package cn.xiejx.examorder.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

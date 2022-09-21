@@ -1,4 +1,4 @@
-package cn.xjx.examorder.entity;
+package cn.xiejx.examorder.entity;
 
 import lombok.Data;
 

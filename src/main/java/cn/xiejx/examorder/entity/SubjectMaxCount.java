@@ -1,6 +1,6 @@
-package cn.xjx.examorder.entity;
+package cn.xiejx.examorder.entity;
 
-import cn.xjx.examorder.utils.Util;
+import cn.xiejx.examorder.utils.Util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;

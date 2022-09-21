@@ -4,22 +4,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.xjx.examorder.fxml.IndexFxml">
+<AnchorPane prefHeight="305.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.xiejx.examorder.fxml.IndexFxml">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label layoutX="152.0" layoutY="14.0" text="考点编排后端程序" />
-    <Button layoutX="279.0" layoutY="243.0" mnemonicParsing="false" onAction="#openBrowser" text="打开浏览器" />
+    <Label layoutX="97.0" layoutY="14.0" text="嘉兴市职业技能操作考试考场编排系统" />
 
+    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#choosePicDir" text="   选择考生照片文件夹  " />
+    <Label fx:id="picPathLabel" layoutX="185.0" layoutY="93.0" />
 
-    <Button layoutX="41.0" layoutY="51.0" mnemonicParsing="false" onAction="#choosePicDir" text="选择考生照片文件夹" />
-    <Label fx:id="picPathLabel" layoutX="185.0" layoutY="55.0" />
+    <Button layoutX="29.0" layoutY="51.0" mnemonicParsing="false" onAction="#chooseDataPath" text="选择考生信息Excel文件" />
+    <Label fx:id="dataPathLabel" layoutX="185.0" layoutY="55.0" />
 
+    <ListView fx:id="infoListView" layoutX="29.0" layoutY="126.0" prefHeight="100.0" prefWidth="411.0" />
 
-    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#chooseDataPath" text="选择考生信息数据文件" />
-    <Label fx:id="dataPathLabel" layoutX="185.0" layoutY="93.0" />
-   <TextArea fx:id="infoTextArea" editable="false" layoutX="29.0" layoutY="136.0" prefHeight="79.0" prefWidth="190.0" wrapText="true" />
-
+    <Button layoutX="29.0" layoutY="242.0" mnemonicParsing="false" onAction="#openBrowser" text="打开浏览器" />
+    <Button layoutX="376.0" layoutY="242.0" mnemonicParsing="false" onAction="#intro" text="使用说明" />
+    <Button layoutX="272.0" layoutY="242.0" mnemonicParsing="false" onAction="#downloadExcelTemplate" text="下载Excel模板" />
 
 </AnchorPane>

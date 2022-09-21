@@ -1,6 +1,6 @@
-package cn.xjx.examorder;
+package cn.xiejx.examorder;
 
-import cn.xjx.examorder.utils.SpringContextUtil;
+import cn.xiejx.examorder.utils.SpringContextUtil;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
