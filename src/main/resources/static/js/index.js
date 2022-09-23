@@ -18,7 +18,7 @@ let app = new Vue({
         ticketColCount: 2,
         tab: "核对单列表",
         examName: "准考证",
-        examTime: "2022年1月1日 10:00-12:00",
+        examTime: "",
         ticketImgWidth: 120,
         ticketRow: 0,
         ticketTitle: "浙江省高校招生职业技能操作考试",
@@ -85,7 +85,11 @@ let app = new Vue({
         },
         exportExcel: function () {
             let url = "exportExcel";
-            axios.get(url).then((res) => {
+            axios.get(url, {
+                params: {
+                    exportFileName: this.tableTitle,
+                }
+            }).then((res) => {
             });
         },
     },

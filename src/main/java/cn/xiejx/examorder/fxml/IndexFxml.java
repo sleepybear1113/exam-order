@@ -1,12 +1,9 @@
 package cn.xiejx.examorder.fxml;
 
-import cn.xiejx.examorder.dbf.DbfAllRecord;
 import cn.xiejx.examorder.entity.PersonInfo;
 import cn.xiejx.examorder.entity.SubjectMaxCount;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.SpringContextUtil;
-import com.alibaba.excel.EasyExcel;
-import com.linuxense.javadbf.DBFRow;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,12 +20,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * There is description
@@ -49,7 +49,7 @@ public class IndexFxml {
     private File lastChosenFile = new File(System.getProperty("user.dir"));
 
     public static List<PersonInfo> personInfoList = new ArrayList<>();
-    public static List<SubjectMaxCount> subjectInfoMaxCountList = new ArrayList<>();
+    public static final List<SubjectMaxCount> subjectInfoMaxCountList = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -58,6 +58,7 @@ public class IndexFxml {
             subjectInfoMaxCountList.clear();
             subjectInfoMaxCountList.addAll(list);
         }
+        addInfo("程序已启动！");
     }
 
     public void openBrowser(ActionEvent actionEvent) throws Exception {
@@ -113,25 +114,10 @@ public class IndexFxml {
         dataPath = file.getAbsolutePath();
 
         Runnable runnable = null;
-        if (fileName.endsWith(".dbf")) {
-            runnable = () -> readDbf(dataPath);
-        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+        if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
             runnable = () -> readExcel(dataPath);
         }
         new Thread(runnable).start();
-    }
-
-    private void readDbf(String dbfFilePath) {
-        DbfAllRecord dbfAllRecord = DbfAllRecord.read(dbfFilePath);
-        if (dbfAllRecord == null) {
-            addInfo("%s 文件读取失败！".formatted(dbfFilePath));
-            return;
-        }
-
-        String[] fieldNames = dbfAllRecord.getFieldNames();
-        List<DBFRow> records = dbfAllRecord.getRecords();
-
-        addInfo("DBF文件读取完毕，数据记录数：%s".formatted(records.size()));
     }
 
     private void readExcel(String filePath) {

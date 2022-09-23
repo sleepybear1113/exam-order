@@ -86,7 +86,6 @@ public class PersonInfo {
         File idCardPic = allPicMap.get(this.idCard);
         if (idCardPic != null) {
             this.picSrc = idCardPic.getAbsolutePath();
-            return;
         }
     }
 

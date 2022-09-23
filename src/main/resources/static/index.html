@@ -40,6 +40,9 @@
         <h1>嘉兴市职业技能操作考试考场编排系统</h1>
         <div  style="display: flex">
             <div id="table" style="float: left; border-right: black 1px solid;">
+                <h3>
+                    数量信息设置
+                </h3>
                 <table>
                     <thead>
                     <tr>
@@ -73,7 +76,10 @@
                 <button v-on:click="change()">修改数量</button>
             </div>
 
-            <div style="float: left; margin-left: 5px;">
+            <div style="float: left; margin-left: 5px; border-right: black solid 1px">
+                <h3>
+                    打印设置
+                </h3>
                 <div>
                     <div>
                         <label>字体大小: {{infoFontSize}}</label>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -103,11 +109,15 @@
                         <button v-on:click="advanceChange()">高级设置</button>
                         <br/>
                         <div v-show="advance">
-                            <button v-on:click="processPic(random)">使用右侧随机数生成</button>
-                            <label>
-                                <input type="number" v-model="random">
-                            </label>
-                            <label>两次的随机数若一致，那么生成的顺序也是一致的。</label>
+                            <p>
+                                <button v-on:click="processPic(random)">使用右侧随机数生成</button>
+                                <label>
+                                    <input type="number" v-model="random">
+                                </label>
+                            </p>
+                           <p>
+                               <label>两次的随机数若一致，那么生成的顺序也是一致的。</label>
+                           </p>
                         </div>
                         <p>
                             <button v-on:click="exportExcel()">导出Excel</button>
@@ -117,11 +127,6 @@
                     <hr>
                     <div>
                         <h4>准考证打印</h4>
-                        <label>
-                            准考证号标题
-                            <input v-model="examName">
-                        </label>
-                        <br/>
 
                         <label>
                             考试时间
@@ -146,6 +151,45 @@
 
                 <button onclick="window.print()">打印</button>
 
+            </div>
+
+            <div style="width: 450px;">
+                <h3>打印页面使用说明</h3>
+                <p>
+                    本页面是在选择完毕考生信息Excel文件和照片后，进行的设置。若没有选择照片，那么将无法显示照片。
+                </p>
+                <hr>
+
+                <p>
+                    “数量信息”设置栏，可以设置每种类别的每个市场的最大考生数量。类别将会从导入的Excel中的“科目类别”列自动提取。默认最大数量为 30。也可以根据类别来自定义设置。
+                </p>
+                <p>
+                    这个数量信息将会保存在程序的文件夹下，名为“自定义配置.json”的文件。若Excel信息录入错误，导致提取类别名称不符合预期，可以删除“自定义配置.json”文件然后重启程序。
+                </p>
+                <hr>
+
+                <p>
+                    这个数量信息将会保存在程序的文件夹下，名为“自定义配置.json”的文件。若Excel信息录入错误，导致提取类别名称不符合预期，可以删除“自定义配置.json”文件然后重启程序。
+                </p>
+                <hr>
+
+                <p>
+                    “核对单功能”中，“顺序生成”会主要按照Excel的顺序进行一次生成，不改变同一个类别内的顺序。随机生成则会随机打乱同一个考点下同一个类别内的考生次序。
+                </p>
+                <p>
+                    “高级选项”中，可以指定随机数。那么程序会用该随机数，通过某种算法，来打乱次序。为 0 的时候不打乱。随机数相同那么打乱情况也相同（也就是可以用来重现编排）。
+                </p>
+                <hr>
+
+                <p>
+                    “准考证生成”需要先生成核对单，会根据核对单来生成准考证。一页 8 张。“考试时间”可选填写，否则将不显示(如填写“2022年1月1日 9:00-11:30”)。
+                </p>
+                <hr>
+
+                <p>
+                    最后，当设置完成后，点击打印，即可弹出打印预览的界面。
+                </p>
+                <span style="font-size: 8px; color: lightgray">@嘉兴市教育考试院</span>
             </div>
         </div>
         <hr>

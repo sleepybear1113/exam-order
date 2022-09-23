@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,7 +54,7 @@ public class IndexController {
     }
 
     @RequestMapping("/exportExcel")
-    public Boolean exportExcel() {
+    public Boolean exportExcel(String exportFileName) {
         List<PersonInfo> data = new ArrayList<>();
         List<ExamPlaceInfo> list = allExamInfo.getList();
         for (ExamPlaceInfo examPlaceInfo : list) {
@@ -68,6 +69,7 @@ public class IndexController {
         }
 
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(StringUtils.isBlank(exportFileName) ? "核对单" : exportFileName);
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("xlsx", "*.xlsx")
         );

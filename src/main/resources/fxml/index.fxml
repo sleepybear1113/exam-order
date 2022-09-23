@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="305.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.xiejx.examorder.fxml.IndexFxml">
     <padding>
@@ -22,5 +23,10 @@
     <Button layoutX="29.0" layoutY="242.0" mnemonicParsing="false" onAction="#openBrowser" text="打开浏览器" />
     <Button layoutX="376.0" layoutY="242.0" mnemonicParsing="false" onAction="#intro" text="使用说明" />
     <Button layoutX="272.0" layoutY="242.0" mnemonicParsing="false" onAction="#downloadExcelTemplate" text="下载Excel模板" />
+   <Label layoutX="365.0" layoutY="277.0" text="嘉兴市教育考试院" textFill="#b5b5b5">
+      <font>
+         <Font size="9.0" />
+      </font>
+   </Label>
 
 </AnchorPane>
