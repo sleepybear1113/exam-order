@@ -66,6 +66,17 @@ public class PersonInfo {
     @ExcelProperty("考点名称")
     private String examPlaceName;
 
+    public void setSubjectType(String subjectType) {
+        this.subjectType = subjectType;
+        this.subjectTypeName = SubjectEnum.getTypeName(subjectType);
+    }
+
+    public void setSubjectTypeName(String subjectTypeName) {
+        if (StringUtils.isNotBlank(subjectTypeName)) {
+            this.subjectTypeName = subjectTypeName;
+        }
+    }
+
     public void setIdCard(String idCard) {
         this.idCard = idCard;
         this.sex = "";

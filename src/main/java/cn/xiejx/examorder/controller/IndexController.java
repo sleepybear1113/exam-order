@@ -31,8 +31,8 @@ public class IndexController {
         if (CollectionUtils.isEmpty(IndexFxml.personInfoList)) {
             return allExamInfo;
         }
-        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(IndexFxml.personInfoList, IndexFxml.subjectInfoMaxCountList, random);
-        allExamInfo.setList(examPlaceInfoList.subList(0, 2));
+        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(IndexFxml.personInfoList, IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST, random);
+        allExamInfo.setList(examPlaceInfoList);
         allExamInfo.processPicSrc(IndexFxml.picPath);
 
         AllExamInfo res = new AllExamInfo();
@@ -42,13 +42,13 @@ public class IndexController {
 
     @RequestMapping("/getSubjectInfoMaxCountList")
     public List<SubjectMaxCount> getSubjectInfoMaxCountList() {
-        return IndexFxml.subjectInfoMaxCountList;
+        return IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST;
     }
 
     @RequestMapping("/updateMaxCount")
     public Boolean updateMaxCount(@RequestBody List<SubjectMaxCount> list) {
-        IndexFxml.subjectInfoMaxCountList.clear();
-        IndexFxml.subjectInfoMaxCountList.addAll(list);
+        IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST.clear();
+        IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
         SubjectMaxCount.write(list);
         return true;
     }

@@ -33,6 +33,10 @@
             display: none;
         }
     }
+
+    .middle {
+        margin: auto;
+    }
 </style>
 <body>
 <div id="app">
@@ -201,71 +205,72 @@
         <hr>
     </div>
 
-    <div id="tables2" class="print" v-if="tab === '核对单列表'">
-        <template v-for="examPlaceInfo in examPlaceInfoList">
+    <div style="display: flex">
+        <div id="tables2" class="print middle" v-if="tab === '核对单列表'">
+            <template v-for="examPlaceInfo in examPlaceInfoList">
 
-            <!--单个科目全部试场-->
-            <template v-for="subjectInfo in examPlaceInfo.list">
+                <!--单个科目全部试场-->
+                <template v-for="subjectInfo in examPlaceInfo.list">
 
-                <!--科目下的单个试场-->
-                <template v-for="(examRoomInfo, index) in subjectInfo.examRoomInfoList">
-                    <table>
-                        <caption>
-                            <div style="margin-bottom: -10px;">
-                                <p class="table-title">{{tableTitle}}</p>
-                                <!--考点-科目-试场号-->
-                                <span style="float: left">
+                    <!--科目下的单个试场-->
+                    <template v-for="(examRoomInfo, index) in subjectInfo.examRoomInfoList">
+                        <table>
+                            <caption>
+                                <div style="margin-bottom: -10px;">
+                                    <p class="table-title">{{tableTitle}}</p>
+                                    <!--考点-科目-试场号-->
+                                    <span style="float: left">
                                         考点：{{examPlaceInfo.examPlaceName}}
                                 </span>
-                                <span>
+                                    <span>
                                         {{subjectInfo.subjectTypeName}}（{{subjectInfo.subjectType}}）
                                 </span>
-                                <span style="float: right">
+                                    <span style="float: right">
                                     试场：{{examRoomInfo.roomName}}
                                 </span>
-                            </div>
-                        </caption>
-                        <template></template>
+                                </div>
+                            </caption>
+                            <template></template>
 
-                        <!--单个考点下若干行-->
-                        <template v-for="row in Math.ceil(examRoomInfo.list.length / colCount)">
-                            <tr>
-                                <!--每行具体内容-->
-                                <template
-                                        v-for="(person, col) in examRoomInfo.list.slice((row - 1) * colCount, row * colCount)">
-                                    <td>
-                                        <img :src="picHost + person.picSrc" alt="" :width="imgWidth + 'px'"
-                                             :height="imgHeight + 'px'"
-                                             style="margin-right: 40px; margin-bottom: 0; margin-top: 12px;">
-                                        <p class="info">{{person.examNumber}}</p>
-                                        <p class="info">{{person.name}}</p>
-                                        <p class="info">{{person.seatNo}}</p>
-                                    </td>
-                                </template>
-
-                                <!--最后一行补充空白-->
-                                <template v-if="(row * colCount) > examRoomInfo.list.length">
-                                    <template v-for="row in (colCount - examRoomInfo.list.length % colCount)">
-                                        <!--空白行-->
+                            <!--单个考点下若干行-->
+                            <template v-for="row in Math.ceil(examRoomInfo.list.length / colCount)">
+                                <tr>
+                                    <!--每行具体内容-->
+                                    <template
+                                            v-for="(person, col) in examRoomInfo.list.slice((row - 1) * colCount, row * colCount)">
                                         <td>
-                                            <img :src="emptyPng" alt=" " :width="imgWidth + 'px'"
+                                            <img :src="picHost + person.picSrc" alt="" :width="imgWidth + 'px'"
                                                  :height="imgHeight + 'px'"
-                                                 style="margin-right: 40px; margin-bottom: 0; margin-top: 12px; border: none">
+                                                 style="margin-right: 40px; margin-bottom: 0; margin-top: 12px;">
+                                            <p class="info">{{person.examNumber}}</p>
+                                            <p class="info">{{person.name}}</p>
+                                            <p class="info">{{person.seatNo}}</p>
                                         </td>
                                     </template>
 
-                                </template>
-                            </tr>
-                        </template>
+                                    <!--最后一行补充空白-->
+                                    <template v-if="(row * colCount) > examRoomInfo.list.length">
+                                        <template v-for="row in (colCount - examRoomInfo.list.length % colCount)">
+                                            <!--空白行-->
+                                            <td>
+                                                <img :src="emptyPng" alt=" " :width="imgWidth + 'px'"
+                                                     :height="imgHeight + 'px'"
+                                                     style="margin-right: 40px; margin-bottom: 0; margin-top: 12px; border: none">
+                                            </td>
+                                        </template>
 
-                    </table>
-                    <div style="page-break-after:always;"></div>
+                                    </template>
+                                </tr>
+                            </template>
+
+                        </table>
+                        <div style="page-break-after:always;"></div>
+                    </template>
                 </template>
             </template>
-        </template>
-    </div>
+        </div>
 
-    <div id="ticket" class="print" style="width: 2000px" v-if="tab === '准考证列表'">
+        <div id="ticket" class="print middle" style="width: 2000px" v-if="tab === '准考证列表'">
             <template v-for="examPlaceInfo in examPlaceInfoList">
                 <template v-for="subjectInfo in examPlaceInfo.list">
                     <template v-for="row in Math.ceil(subjectInfo.personInfoList.length / ticketColCount)">
@@ -283,7 +288,7 @@
                                                 <p class="ticket-p">准考证号：{{person.examNumber}}</p>
                                                 <p class="ticket-p">证件号码：{{person.idCard}}</p>
                                                 <p class="ticket-p">考生姓名：{{person.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别：{{person.sex}}</p>
-                                                <p class="ticket-p">考点：{{person.examPlaceName}}</p>
+                                                <p class="ticket-p" v-show="person.examPlaceName !=null && person.examPlaceName.length > 0">考点：{{person.examPlaceName}}</p>
                                                 <p class="ticket-p">科目：{{person.subjectTypeName}} &nbsp;&nbsp;&nbsp;&nbsp; 考场：{{person.roomNo}} &nbsp;&nbsp;&nbsp; 座位号：{{person.seatNo}}</p>
                                                 <p class="ticket-p" v-show="examTime !== ''">时间：{{examTime}}</p>
                                             </div>
@@ -304,6 +309,7 @@
             </template>
 
 
+        </div>
     </div>
 </div>
 

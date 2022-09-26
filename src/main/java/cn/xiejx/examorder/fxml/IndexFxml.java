@@ -1,6 +1,7 @@
 package cn.xiejx.examorder.fxml;
 
 import cn.xiejx.examorder.entity.PersonInfo;
+import cn.xiejx.examorder.entity.SubjectEnum;
 import cn.xiejx.examorder.entity.SubjectMaxCount;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.SpringContextUtil;
@@ -49,14 +50,14 @@ public class IndexFxml {
     private File lastChosenFile = new File(System.getProperty("user.dir"));
 
     public static List<PersonInfo> personInfoList = new ArrayList<>();
-    public static final List<SubjectMaxCount> subjectInfoMaxCountList = new ArrayList<>();
+    public static final List<SubjectMaxCount> SUBJECT_INFO_MAX_COUNT_LIST = new ArrayList<>();
 
     @FXML
     public void initialize() {
         List<SubjectMaxCount> list = SubjectMaxCount.read();
         if (CollectionUtils.isNotEmpty(list)) {
-            subjectInfoMaxCountList.clear();
-            subjectInfoMaxCountList.addAll(list);
+            SUBJECT_INFO_MAX_COUNT_LIST.clear();
+            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
         }
         addInfo("程序已启动！");
     }
@@ -142,8 +143,14 @@ public class IndexFxml {
             for (SubjectMaxCount subjectMaxCount : list) {
                 map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
             }
-            subjectInfoMaxCountList.clear();
-            subjectInfoMaxCountList.addAll(list);
+            SUBJECT_INFO_MAX_COUNT_LIST.clear();
+            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
+        } else {
+            for (SubjectEnum value : SubjectEnum.values()) {
+                SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
+                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
+                map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
+            }
         }
 
         int addCount = 0;
@@ -165,8 +172,8 @@ public class IndexFxml {
         if (addCount > 0) {
             list = new ArrayList<>(map.values());
             SubjectMaxCount.write(list);
-            subjectInfoMaxCountList.clear();
-            subjectInfoMaxCountList.addAll(list);
+            SUBJECT_INFO_MAX_COUNT_LIST.clear();
+            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
             addInfo("新增考点配置数：%s".formatted(addCount));
         }
     }
