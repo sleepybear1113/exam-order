@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.xiejx</groupId>
     <artifactId>exam-order</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>exam-order</name>
     <description>exam-order</description>
     <properties>
