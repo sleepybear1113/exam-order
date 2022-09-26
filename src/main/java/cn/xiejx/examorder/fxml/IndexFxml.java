@@ -146,6 +146,7 @@ public class IndexFxml {
             SUBJECT_INFO_MAX_COUNT_LIST.clear();
             SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
         } else {
+            SUBJECT_INFO_MAX_COUNT_LIST.clear();
             for (SubjectEnum value : SubjectEnum.values()) {
                 SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
                 SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);

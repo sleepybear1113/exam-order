@@ -45,6 +45,7 @@ class SubjectInfo {
         this.personInfoList = props.personInfoList;
         this.examRoomInfoList = props.examRoomInfoList;
         this.maxCount = props.maxCount == null ? 30 : props.maxCount;
+        this.time = "";
     }
 }
 

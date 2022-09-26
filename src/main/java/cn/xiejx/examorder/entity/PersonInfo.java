@@ -82,7 +82,7 @@ public class PersonInfo {
         this.sex = "";
         if (StringUtils.isNotBlank(idCard) && idCard.length() > 16) {
             int c = idCard.charAt(16) - '0';
-            if (c > 0 && c < 9) {
+            if (c >= 0 && c <= 9) {
                 this.sex = c % 2 == 1 ? "男" : "女";
             }
         }

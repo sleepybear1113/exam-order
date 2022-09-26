@@ -1,5 +1,11 @@
 function addPrefixZero(num, n) {
-    return String("0".repeat(n) + num).slice(-n);
+    let pn = parseInt(n);
+    let pNum = parseInt(num);
+    if (pNum >= pn) {
+        return "";
+    }
+    let value = "　".repeat(pn - pNum);
+    return String(value);
 }
 
 // axios 全局拦截器

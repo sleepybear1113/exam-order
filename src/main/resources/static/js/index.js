@@ -1,17 +1,18 @@
 let app = new Vue({
     el: '#app',
     data: {
-        imgWidth: 70,
+        imgWidth: 120,
         imgHeight: null,
         personTableList: [],
-        colCount: 5,
-        infoFontSize: 14,
+        colCount: 6,
+        infoFontSize: 16,
         examPlaceInfoList: [],
         colCountTmp: 0,
         picHost: "",
         subjectInfoMaxCountList: [],
+        subjectInfoMaxCountMap: {},
         random: 0,
-        tableTitle: "考试核对单",
+        tableTitle: "嘉兴市职业技能操作考试核对单",
         emptyPng: "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
         advance: false,
         printTitle: "准考证",
@@ -74,9 +75,12 @@ let app = new Vue({
                 let allExamInfo = new AllExamInfo(res.data);
                 let subjectInfoList = res.data;
                 this.subjectInfoMaxCountList = [];
+                this.subjectInfoMaxCountMap = {};
                 for (let key in subjectInfoList) {
                     let subjectInfo = new SubjectInfo(subjectInfoList[key]);
                     this.subjectInfoMaxCountList.push(subjectInfo);
+
+                    this.subjectInfoMaxCountMap[subjectInfo.subjectType] = subjectInfo;
                 }
             });
         },
