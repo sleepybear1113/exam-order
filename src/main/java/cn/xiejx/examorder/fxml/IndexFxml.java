@@ -26,10 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * There is description
@@ -139,44 +136,35 @@ public class IndexFxml {
         List<SubjectMaxCount> list = SubjectMaxCount.read();
 
         Map<String, SubjectMaxCount> map = new HashMap<>();
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (SubjectMaxCount subjectMaxCount : list) {
-                map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-            }
-            SUBJECT_INFO_MAX_COUNT_LIST.clear();
-            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
-        } else {
-            SUBJECT_INFO_MAX_COUNT_LIST.clear();
-            for (SubjectEnum value : SubjectEnum.values()) {
-                SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
-                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
-                map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-            }
+
+        for (SubjectEnum value : SubjectEnum.values()) {
+            SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
+            SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
+            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
         }
 
-        int addCount = 0;
+        for (SubjectMaxCount subjectMaxCount : list) {
+            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
+        }
+
+        Set<String> subjectTypeSet = new HashSet<>();
         for (PersonInfo personInfo : personInfoList) {
             String subjectType = personInfo.getSubjectType();
             if (StringUtils.isBlank(subjectType)) {
                 continue;
             }
-            String subjectTypeName = personInfo.getSubjectTypeName();
-            SubjectMaxCount subjectMaxCount = map.get(subjectType);
+            subjectTypeSet.add(subjectType);
+        }
 
-            if (subjectMaxCount == null) {
-                subjectMaxCount = new SubjectMaxCount(subjectType, subjectTypeName);
-                map.put(subjectType, subjectMaxCount);
-                addCount++;
+        SUBJECT_INFO_MAX_COUNT_LIST.clear();
+        for (String s : subjectTypeSet) {
+            SubjectMaxCount subjectMaxCount1 = map.get(s);
+            if (subjectMaxCount1 != null) {
+                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount1);
             }
         }
-
-        if (addCount > 0) {
-            list = new ArrayList<>(map.values());
-            SubjectMaxCount.write(list);
-            SUBJECT_INFO_MAX_COUNT_LIST.clear();
-            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
-            addInfo("新增考点配置数：%s".formatted(addCount));
-        }
+        SUBJECT_INFO_MAX_COUNT_LIST.sort(Comparator.comparing(SubjectMaxCount::getSubjectType));
+        addInfo("读取考点配置数：%s".formatted(SUBJECT_INFO_MAX_COUNT_LIST.size()));
     }
 
     public void addInfo(String s) {

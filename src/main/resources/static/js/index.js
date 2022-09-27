@@ -12,7 +12,7 @@ let app = new Vue({
         subjectInfoMaxCountList: [],
         subjectInfoMaxCountMap: {},
         random: 0,
-        tableTitle: "嘉兴市职业技能操作考试核对单",
+        tableTitle: "嘉兴市职业技能操作考试考场核对单",
         emptyPng: "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
         advance: false,
         printTitle: "准考证",
