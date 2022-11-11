@@ -31,7 +31,11 @@ public class IndexController {
         if (CollectionUtils.isEmpty(IndexFxml.personInfoList)) {
             return allExamInfo;
         }
-        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(IndexFxml.personInfoList, IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST, random);
+        List<PersonInfo> personInfoListCopy = new ArrayList<>();
+        for (PersonInfo personInfo : IndexFxml.personInfoList) {
+            personInfoListCopy.add(personInfo.copy());
+        }
+        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST, random);
         allExamInfo.setList(examPlaceInfoList);
         allExamInfo.processPicSrc(IndexFxml.picPath);
 

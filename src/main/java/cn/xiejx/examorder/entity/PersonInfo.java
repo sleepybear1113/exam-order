@@ -5,6 +5,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -158,5 +159,11 @@ public class PersonInfo {
             }
         }
         return res;
+    }
+
+    public PersonInfo copy() {
+        PersonInfo personInfo = new PersonInfo();
+        BeanUtils.copyProperties(this, personInfo);
+        return personInfo;
     }
 }
