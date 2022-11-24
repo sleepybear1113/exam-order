@@ -5,28 +5,31 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="305.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.xiejx.examorder.fxml.IndexFxml">
+<AnchorPane prefHeight="363.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.xiejx.examorder.fxml.IndexFxml">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label layoutX="97.0" layoutY="14.0" text="嘉兴市职业技能操作考试考场编排系统">
+    <Label layoutX="97.0" layoutY="14.0" text="嘉兴市职业技能操作考试试场编排系统">
       <font>
          <Font size="18.0" />
       </font></Label>
 
-    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#choosePicDir" text="   选择考生照片文件夹  " />
+    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#choosePicDir" prefHeight="23.0" prefWidth="141.0" text="选择考生照片文件夹" />
     <Label fx:id="picPathLabel" layoutX="185.0" layoutY="93.0" />
 
-    <Button layoutX="29.0" layoutY="51.0" mnemonicParsing="false" onAction="#chooseDataPath" text="选择考生信息Excel文件" />
+    <Button layoutX="29.0" layoutY="51.0" mnemonicParsing="false" onAction="#chooseDataPath" prefHeight="23.0" prefWidth="142.0" text="选择考生信息Excel" />
     <Label fx:id="dataPathLabel" layoutX="185.0" layoutY="55.0" />
 
-    <ListView fx:id="infoListView" layoutX="29.0" layoutY="126.0" prefHeight="100.0" prefWidth="411.0" />
+    <Button layoutX="29.0" layoutY="129.0" mnemonicParsing="false" onAction="#chooseRoomPath" prefHeight="23.0" prefWidth="142.0" text="选择试场场次规格Excel" />
+    <Label fx:id="roomPathLabel" layoutX="185.0" layoutY="133.0" />
 
-    <Button layoutX="29.0" layoutY="242.0" mnemonicParsing="false" onAction="#openBrowser" text="打开浏览器" />
-    <Button layoutX="376.0" layoutY="242.0" mnemonicParsing="false" onAction="#intro" text="使用说明" />
-    <Button layoutX="272.0" layoutY="242.0" mnemonicParsing="false" onAction="#downloadExcelTemplate" text="下载Excel模板" />
-   <Label layoutX="365.0" layoutY="277.0" text="嘉兴市教育考试院" textFill="#b5b5b5">
+    <ListView fx:id="infoListView" layoutX="29.0" layoutY="163.0" prefHeight="100.0" prefWidth="411.0" />
+
+    <Button layoutX="29.0" layoutY="279.0" mnemonicParsing="false" onAction="#openBrowser" text="打开浏览器" />
+    <Button layoutX="376.0" layoutY="279.0" mnemonicParsing="false" onAction="#intro" text="使用说明" />
+    <Button layoutX="272.0" layoutY="279.0" mnemonicParsing="false" onAction="#downloadExcelTemplate" text="下载Excel模板" />
+   <Label layoutX="365.0" layoutY="314.0" text="嘉兴市教育考试院" textFill="#b5b5b5">
       <font>
          <Font size="9.0" />
       </font>

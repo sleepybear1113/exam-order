@@ -42,7 +42,9 @@ public class IndexFxml {
 
     public Label dataPathLabel;
     public ListView<String> infoListView;
+    public Label roomPathLabel;
     private String dataPath;
+    private String roomPath;
 
     private File lastChosenFile = new File(System.getProperty("user.dir"));
 
@@ -94,7 +96,7 @@ public class IndexFxml {
 
     public void chooseDataPath(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("请选择Excel文件");
+        fileChooser.setTitle("请选择考生Excel文件");
         fileChooser.setInitialDirectory(lastChosenFile);
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Excel文件", "*.xls", "*.xlsx"),
@@ -113,13 +115,89 @@ public class IndexFxml {
 
         Runnable runnable = null;
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            runnable = () -> readExcel(dataPath);
+            runnable = () -> readPersonExcel(dataPath);
         }
         new Thread(runnable).start();
     }
 
-    private void readExcel(String filePath) {
-        personInfoList = Read.readData(filePath);
+
+    public void chooseRoomPath(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("请选择试场场次Excel文件");
+        fileChooser.setInitialDirectory(lastChosenFile);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Excel文件", "*.xls", "*.xlsx"),
+                new FileChooser.ExtensionFilter("全部", "*.*")
+        );
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file == null) {
+            roomPathLabel.setText("未选择！");
+            roomPathLabel = null;
+            return;
+        }
+        lastChosenFile = file.getParentFile();
+        String fileName = file.getName();
+        roomPathLabel.setText(fileName);
+        roomPath = file.getAbsolutePath();
+
+        Runnable runnable = null;
+        if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+            runnable = () -> readRoomExcel(roomPath);
+        }
+        new Thread(runnable).start();
+    }
+
+    private void readPersonExcel(String filePath) {
+        personInfoList = Read.readPersonData(filePath);
+        List<String> valid = PersonInfo.valid(personInfoList);
+        String boo = valid.get(0);
+        valid.remove(0);
+        for (String s : valid) {
+            addInfo(s, false);
+        }
+        if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
+            addInfo("读取失败！请重新选择！");
+            personInfoList.clear();
+            return;
+        }
+        addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), personInfoList.size()));
+
+        List<SubjectMaxCount> list = SubjectMaxCount.read();
+
+        Map<String, SubjectMaxCount> map = new HashMap<>();
+
+        for (SubjectEnum value : SubjectEnum.values()) {
+            SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
+            SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
+            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
+        }
+
+        for (SubjectMaxCount subjectMaxCount : list) {
+            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
+        }
+
+        Set<String> subjectTypeSet = new HashSet<>();
+        for (PersonInfo personInfo : personInfoList) {
+            String subjectType = personInfo.getSubjectType();
+            if (StringUtils.isBlank(subjectType)) {
+                continue;
+            }
+            subjectTypeSet.add(subjectType);
+        }
+
+        SUBJECT_INFO_MAX_COUNT_LIST.clear();
+        for (String s : subjectTypeSet) {
+            SubjectMaxCount subjectMaxCount1 = map.get(s);
+            if (subjectMaxCount1 != null) {
+                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount1);
+            }
+        }
+        SUBJECT_INFO_MAX_COUNT_LIST.sort(Comparator.comparing(SubjectMaxCount::getSubjectType));
+        addInfo("读取考点配置数：%s".formatted(SUBJECT_INFO_MAX_COUNT_LIST.size()));
+    }
+
+    private void readRoomExcel(String filePath) {
+        personInfoList = Read.readRoomData(filePath);
         List<String> valid = PersonInfo.valid(personInfoList);
         String boo = valid.get(0);
         valid.remove(0);

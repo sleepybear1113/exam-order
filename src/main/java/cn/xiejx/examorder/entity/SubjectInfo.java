@@ -36,10 +36,18 @@ public class SubjectInfo {
         this.personInfoList = personInfoList;
     }
 
+    /**
+     * 构建考试考场分组
+     *
+     * @param count  第 n 个试场
+     * @param random 随机数种子
+     * @return 试场数
+     */
     public int buildExamRoomInfoList(int count, Long random) {
         if (CollectionUtils.isEmpty(personInfoList)) {
             return 0;
         }
+        // 是否重置座位号等
         boolean reset = random != null && random > 0;
         if (reset) {
             Collections.shuffle(personInfoList, new Random(random));
