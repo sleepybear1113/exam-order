@@ -1,12 +1,14 @@
 package cn.xiejx.examorder.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * There is description
@@ -72,7 +74,7 @@ public class ExamPlaceInfo {
                 List<PersonInfo> personList = subjectPersonInfoMap.get(subject);
                 ExamRoomInfo.buildExamRoom(examRoomInfos, personList, random);
 
-                String examPlaceName = personList.get(0).getExamPlaceName();
+                String examPlaceName = examRoomInfos.get(0).getExamPlaceName();
                 examPlaceInfoList.add(new ExamPlaceInfo(examPlaceName, examPlaceId, examRoomInfos));
             }
         });

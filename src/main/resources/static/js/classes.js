@@ -4,12 +4,19 @@ class PersonInfo {
             return;
         }
 
-        this.picSrc = window.location.origin + props.picSrc;
+        this.picSrc = props.picSrc == null || props.picSrc === "" ? null : window.location.origin + props.picSrc;
+        this.id = props.id;
         this.name = props.name;
+        this.sex = props.sex;
+        this.roomNo = props.roomNo;
+        this.examPlaceId = props.examPlaceId;
         this.seatNo = props.seatNo;
         this.examNumber = props.examNumber;
         this.examPlaceName = props.examPlaceName;
         this.idCard = props.idCard;
+        this.subjectType = props.subjectType;
+        this.subjectTypeName = props.subjectTypeName;
+        this.time = props.time;
     }
 }
 
@@ -87,7 +94,9 @@ class ExamRoomInfo {
                 let p = [];
                 let perList = tmpList[i];
                 if (perList != null && perList.length >= 0) {
-                    p.push(new PersonInfo(perList[i]));
+                    for (let j = 0; j < perList.length; j++) {
+                        p.push(new PersonInfo(perList[j]));
+                    }
                 }
 
                 this.list.push(p);

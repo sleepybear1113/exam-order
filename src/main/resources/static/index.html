@@ -249,7 +249,6 @@
 
                     <!--科目下的单个试场-->
                     <template v-for="(personInfoList, index) in examRoomInfo.list">
-                        {{log(personInfoList)}}
                         <table>
                             <caption>
                                 <div style="margin-bottom: -5px;">
@@ -259,7 +258,7 @@
                                             考点：{{examPlaceInfo.examPlaceName}}
                                         </span>
                                     <span class="check-caption">
-                                            {{examRoomInfo.subjectTypeName}}（{{examRoomInfo.subjectType}}）
+                                            {{examRoomInfo.subjectName}}({{examRoomInfo.subjectType}})
                                         </span>
                                     <span class="check-caption" style="float: right">
                                             试场：{{examRoomInfo.roomName}}
@@ -299,9 +298,9 @@
                             </template>
                         </table>
 
-                        <template v-for="(personInfoList, index) in personInfoList">
-
-                        </template>
+                        <div class="no-print">
+                            <hr>
+                        </div>
                         <div style="page-break-after:always;"></div>
                     </template>
                 </template>
@@ -310,57 +309,76 @@
 
         <div id="ticket" class="print middle" style="width: 2000px" v-if="tab === '准考证列表'">
             <template v-for="examPlaceInfo in examPlaceInfoList">
-                <template v-for="subjectInfo in examPlaceInfo.list">
-                    <template v-for="row in Math.ceil(subjectInfo.personInfoList.length / ticketColCount)">
-                        <table>
-                            <tr>
-                                <template
-                                        v-for="(person, col) in subjectInfo.personInfoList.slice((row - 1) * ticketColCount, row * ticketColCount)">
-                                    <td>
-                                        <h2 style="text-align: center">{{ticketTitle}}</h2>
-                                        <h2 style="text-align: center; margin-top: -15px">{{examName}}</h2>
-                                        <div style="margin-right: 20px; width: 535px; float: left">
-                                            <div style="float: right">
-                                                <img :src="picHost + person.picSrc" alt=""
-                                                     :width="ticketImgWidth + 'px'"
-                                                     :height="ticketImgWidth * 1.4 + 'px'" style="margin-right: 40px;">
-                                            </div>
-                                            <div style="margin-right: 20px">
-                                                <p class="ticket-p">准考证号：{{person.examNumber}}</p>
-                                                <p class="ticket-p">证件号码：{{person.idCard}}</p>
-                                                <p class="ticket-p">
-                                                    考生姓名：{{person.name}}&nbsp;性别：{{person.sex}}</p>
-                                                <p class="ticket-p"
-                                                   v-show="person.examPlaceName !=null && person.examPlaceName.length > 0">
-                                                    考点：{{person.examPlaceName}}</p>
-                                                <p class="ticket-p">
-                                                    类别：{{person.subjectTypeName}}{{addPrefixZero(person.subjectTypeName.length,
-                                                    4)}} 试场号：{{person.roomNo}}&nbsp;座位号：{{person.seatNo}}</p>
-                                                <p class="ticket-p"
-                                                   v-show="subjectInfoMaxCountMap[person.subjectType].time !== ''">
-                                                    时间：{{subjectInfoMaxCountMap[person.subjectType].time}}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </template>
-                            </tr>
-                            <tr>
-                                <td><p></p>
-                                    <p></p>
-                                    <p></p></td>
-                            </tr>
-                        </table>
+                <!--所有考点取出单个考点，包含下属所有试场-->
 
-                        <template v-if="row % 4 === 0">
-                            <div style="page-break-after: always;"></div>
+                <template v-for="examRoomInfo in examPlaceInfo.list">
+                    <!--所有试场取出单个科目的试场合集-->
+
+                    <template v-for="oneRoomPersons in examRoomInfo.list">
+                        <template v-for="row in Math.ceil(oneRoomPersons.length / ticketColCount)">
+                            <table>
+                                <tr>
+                                    <template
+                                            v-for="(person, col) in oneRoomPersons.slice((row - 1) * ticketColCount, row * ticketColCount)">
+                                        <td>
+                                            <h2 style="text-align: center">{{ticketTitle}}</h2>
+                                            <h2 style="text-align: center; margin-top: -15px">{{examName}}</h2>
+                                            <div style="margin-right: 20px; width: 535px; float: left">
+                                                <div style="float: right">
+                                                    <img :src="picHost + person.picSrc" alt=""
+                                                         :width="ticketImgWidth + 'px'"
+                                                         :height="ticketImgWidth * 1.4 + 'px'" style="margin-right: 40px;">
+                                                </div>
+                                                <div style="margin-right: 20px">
+                                                    <p class="ticket-p">准考证号：{{person.examNumber}}</p>
+                                                    <p class="ticket-p">证件号码：{{person.idCard}}</p>
+                                                    <p class="ticket-p">
+                                                        考生姓名：{{person.name}}&nbsp;性别：{{person.sex}}</p>
+                                                    <p class="ticket-p"
+                                                       v-show="person.examPlaceName !=null && person.examPlaceName.length > 0">
+                                                        考点：{{person.examPlaceName}}</p>
+                                                    <p class="ticket-p">
+                                                        类别：{{person.subjectTypeName}}{{addPrefixZero(person.subjectTypeName.length,
+                                                            4)}} 试场号：{{person.roomNo}}&nbsp;座位号：{{person.seatNo}}</p>
+                                                    <p class="ticket-p" v-show="person.time !== ''">
+                                                        时间：{{person.time}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p></p>
+                                        <p></p>
+                                        <p></p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <template v-if="row % 4 === 0">
+                                <div class="no-print">
+                                    <hr>
+                                </div>
+                                <div style="page-break-after: always;"></div>
+                                {{33333333}}
+                            </template>
                         </template>
+
+                        <div class="no-print">
+                            <hr>
+                        </div>
+                        <div style="page-break-after:always;"></div>
                     </template>
+
+                    {{444444}}
+                    <div class="no-print">
+                        <hr>
+                    </div>
                     <div style="page-break-after:always;"></div>
                 </template>
-                <div style="page-break-after:always;"></div>
             </template>
-
-
         </div>
     </div>
 </div>

@@ -68,6 +68,8 @@ public class PersonInfo {
     private String examPlaceId;
     @ExcelIgnore
     private String examPlaceName;
+    @ExcelProperty("考试时间")
+    private String time;
 
     public void setSubjectType(String subjectType) {
         this.subjectType = subjectType;
@@ -131,7 +133,7 @@ public class PersonInfo {
         }
     }
 
-    public static void buildSeatNo(List<PersonInfo> list, String roomNo, Long random) {
+    public static void buildSeatNo(List<PersonInfo> list, String roomNo, Long random, String time) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
@@ -150,6 +152,7 @@ public class PersonInfo {
             PersonInfo personInfo = list.get(i);
             personInfo.setSeatNo(resetSeatNo ? String.format(format, (i + 1)) : personInfo.getSeatNo());
             personInfo.setRoomNo(roomNo);
+            personInfo.setTime(time);
         }
     }
 

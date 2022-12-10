@@ -2,7 +2,6 @@ package cn.xiejx.examorder.fxml;
 
 import cn.xiejx.examorder.entity.ExamRoomInfo;
 import cn.xiejx.examorder.entity.PersonInfo;
-import cn.xiejx.examorder.entity.SubjectEnum;
 import cn.xiejx.examorder.entity.SubjectMaxCount;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.SpringContextUtil;
@@ -17,7 +16,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

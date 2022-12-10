@@ -162,7 +162,10 @@ public class ExamRoomInfo {
                     break;
                 }
                 List<PersonInfo> subList = personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + maxCount));
-                examRoomInfo.list.add(new ArrayList<>(subList));
+                List<PersonInfo> personInfos = new ArrayList<>(subList);
+
+                PersonInfo.buildSeatNo(personInfos, "", random, examRoomInfo.time);
+                examRoomInfo.list.add(personInfos);
                 startIndex += maxCount;
             }
         }
