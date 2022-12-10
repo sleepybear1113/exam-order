@@ -55,9 +55,14 @@
                 <h3>
                     数量信息设置
                 </h3>
+                <button v-on:click="change()">修改数量</button>
+
                 <table>
                     <thead>
                     <tr>
+                        <td>
+                            考点代码
+                        </td>
                         <td>
                             科目类别
                         </td>
@@ -65,36 +70,45 @@
                             科目类别名
                         </td>
                         <td>
-                            试场人数
+                            试场容纳人数
+                        </td>
+                        <td>
+                            试场数量
                         </td>
                         <td>
                             考试时间
                         </td>
                     </tr>
                     </thead>
-                    <template v-for="subjectCount in subjectInfoMaxCountList">
+                    <template v-for="examRoomInfo in examRoomInfoList">
                         <tr>
                             <td>
-                                {{subjectCount.subjectType}}
+                                {{examRoomInfo.examPlaceId == null ? "无" : examRoomInfo.examPlaceId}}
                             </td>
                             <td>
-                                {{subjectCount.subjectTypeName}}
+                                {{examRoomInfo.subjectType}}
+                            </td>
+                            <td>
+                                {{examRoomInfo.subjectName}}
                             </td>
                             <td>
                                 <label>
-                                    <input v-model="subjectCount.maxCount" type="number" class="number-input">
+                                    <input v-model="examRoomInfo.maxCount" type="number" class="number-input">
                                 </label>
                             </td>
                             <td>
                                 <label>
-                                    <input v-model="subjectCount.time" style="width: 230px">
+                                    <input v-model="examRoomInfo.roomCount" type="number" class="number-input">
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <input v-model="examRoomInfo.time" style="width: 230px">
                                 </label>
                             </td>
                         </tr>
                     </template>
                 </table>
-                <button v-on:click="change()">修改数量</button>
-                <span>考试时间不会保存至本地，每次刷新都需要重新输入</span>
             </div>
 
             <div style="float: left; margin-left: 5px; border-right: black solid 1px">
@@ -226,40 +240,39 @@
 
     <div style="display: flex">
         <div id="tables2" class="print middle" v-if="tab === '核对单列表'">
+
+            <!--全部考点遍历-->
             <template v-for="examPlaceInfo in examPlaceInfoList">
 
-                <!--单个科目全部试场-->
-                <template v-for="subjectInfo in examPlaceInfo.list">
+                <!--单个考点的全部试场-->
+                <template v-for="examRoomInfo in examPlaceInfo.list">
 
                     <!--科目下的单个试场-->
-                    <template v-for="(examRoomInfo, index) in subjectInfo.examRoomInfoList">
+                    <template v-for="(personInfoList, index) in examRoomInfo.list">
+                        {{log(personInfoList)}}
                         <table>
                             <caption>
                                 <div style="margin-bottom: -5px;">
                                     <p class="table-title">{{tableTitle}}</p>
                                     <!--考点-科目-试场号-->
                                     <span class="check-caption" style="float: left">
-                                        考点：{{examPlaceInfo.examPlaceName}}
-                                </span>
+                                            考点：{{examPlaceInfo.examPlaceName}}
+                                        </span>
                                     <span class="check-caption">
-                                        {{subjectInfo.subjectTypeName}}（{{subjectInfo.subjectType}}）
-                                </span>
-<!--                                    <span class="check-caption" style="float: right">-->
-<!--                                    &nbsp;&nbsp;&nbsp;-->
-<!--                                </span>-->
+                                            {{examRoomInfo.subjectTypeName}}（{{examRoomInfo.subjectType}}）
+                                        </span>
                                     <span class="check-caption" style="float: right">
-                                    试场：{{examRoomInfo.roomName}}
-                                </span>
-
+                                            试场：{{examRoomInfo.roomName}}
+                                        </span>
                                 </div>
                             </caption>
 
                             <!--单个考点下若干行-->
-                            <template v-for="row in Math.ceil(examRoomInfo.list.length / colCount)">
+                            <template v-for="row in Math.ceil(personInfoList.length / colCount)">
                                 <tr>
                                     <!--每行具体内容-->
                                     <template
-                                            v-for="(person, col) in examRoomInfo.list.slice((row - 1) * colCount, row * colCount)">
+                                            v-for="(person, col) in personInfoList.slice((row - 1) * colCount, row * colCount)">
                                         <td>
                                             <img :src="picHost + person.picSrc" alt="" :width="imgWidth + 'px'"
                                                  :height="imgHeight + 'px'"
@@ -271,8 +284,8 @@
                                     </template>
 
                                     <!--最后一行补充空白-->
-                                    <template v-if="(row * colCount) > examRoomInfo.list.length">
-                                        <template v-for="row in (colCount - examRoomInfo.list.length % colCount)">
+                                    <template v-if="(row * colCount) > personInfoList.length">
+                                        <template v-for="row in (colCount - personInfoList.length % colCount)">
                                             <!--空白行-->
                                             <td>
                                                 <img :src="emptyPng" alt=" " :width="imgWidth + 'px'"
@@ -284,8 +297,11 @@
                                     </template>
                                 </tr>
                             </template>
-
                         </table>
+
+                        <template v-for="(personInfoList, index) in personInfoList">
+
+                        </template>
                         <div style="page-break-after:always;"></div>
                     </template>
                 </template>

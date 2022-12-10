@@ -58,7 +58,7 @@ public enum SubjectEnum {
 
     public static String getTypeName(String type) {
         if (StringUtils.isBlank(type)) {
-            return "未知类别";
+            return null;
         }
 
         for (SubjectEnum value : values()) {
@@ -67,6 +67,6 @@ public enum SubjectEnum {
             }
         }
 
-        return "未知类别";
+        return null;
     }
 }

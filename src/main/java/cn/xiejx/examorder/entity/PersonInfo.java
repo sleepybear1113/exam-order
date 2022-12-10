@@ -20,6 +20,8 @@ import java.util.Map;
  */
 @Data
 public class PersonInfo {
+    public static final String OPTION_BLANK = "#选填";
+
     @ExcelIgnore
     private Integer id;
 
@@ -41,7 +43,7 @@ public class PersonInfo {
     @ExcelProperty("类别代码")
     private String subjectType;
 
-    @ExcelProperty("类别名称")
+    @ExcelIgnore
     private String subjectTypeName;
 
     /**
@@ -64,12 +66,20 @@ public class PersonInfo {
 
     @ExcelProperty("考点代码")
     private String examPlaceId;
-    @ExcelProperty("考点名称")
+    @ExcelIgnore
     private String examPlaceName;
 
     public void setSubjectType(String subjectType) {
         this.subjectType = subjectType;
         this.subjectTypeName = SubjectEnum.getTypeName(subjectType);
+    }
+
+    public void setExamPlaceId(String examPlaceId) {
+        if (StringUtils.isBlank(examPlaceId) || examPlaceId.startsWith(OPTION_BLANK)) {
+            this.examPlaceId = null;
+            return;
+        }
+        this.examPlaceId = examPlaceId;
     }
 
     public void setSubjectTypeName(String subjectTypeName) {
@@ -89,15 +99,35 @@ public class PersonInfo {
         }
     }
 
+    public void setRoomNo(String roomNo) {
+        if (StringUtils.isBlank(roomNo) || roomNo.startsWith(OPTION_BLANK)) {
+            this.roomNo = null;
+            return;
+        }
+        this.roomNo = roomNo;
+    }
+
+    public void setSeatNo(String seatNo) {
+        if (StringUtils.isBlank(seatNo) || seatNo.startsWith(OPTION_BLANK)) {
+            this.seatNo = null;
+            return;
+        }
+        this.seatNo = seatNo;
+    }
+
     public void buildPicSrc(Map<String, File> allPicMap) {
         File examNumberPic = allPicMap.get(this.examNumber);
         if (examNumberPic != null) {
             this.picSrc = examNumberPic.getAbsolutePath();
             return;
         }
-        File idCardPic = allPicMap.get(this.idCard);
-        if (idCardPic != null) {
-            this.picSrc = idCardPic.getAbsolutePath();
+        File idCardPicLowerCase = allPicMap.get(this.idCard.toLowerCase());
+        File idCardPicUpperCase = allPicMap.get(this.idCard.toUpperCase());
+        if (idCardPicLowerCase != null) {
+            this.picSrc = idCardPicLowerCase.getAbsolutePath();
+        }
+        if (idCardPicUpperCase != null) {
+            this.picSrc = idCardPicUpperCase.getAbsolutePath();
         }
     }
 

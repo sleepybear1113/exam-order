@@ -1,5 +1,6 @@
 package cn.xiejx.examorder.fxml;
 
+import cn.xiejx.examorder.entity.ExamRoomInfo;
 import cn.xiejx.examorder.entity.PersonInfo;
 import cn.xiejx.examorder.entity.SubjectEnum;
 import cn.xiejx.examorder.entity.SubjectMaxCount;
@@ -49,15 +50,12 @@ public class IndexFxml {
     private File lastChosenFile = new File(System.getProperty("user.dir"));
 
     public static List<PersonInfo> personInfoList = new ArrayList<>();
+
+    public static Map<String, Map<String, List<ExamRoomInfo>>> placeSubjectRoomInfoMap = new HashMap<>();
     public static final List<SubjectMaxCount> SUBJECT_INFO_MAX_COUNT_LIST = new ArrayList<>();
 
     @FXML
     public void initialize() {
-        List<SubjectMaxCount> list = SubjectMaxCount.read();
-        if (CollectionUtils.isNotEmpty(list)) {
-            SUBJECT_INFO_MAX_COUNT_LIST.clear();
-            SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
-        }
         addInfo("程序已启动！");
     }
 
@@ -161,88 +159,50 @@ public class IndexFxml {
             return;
         }
         addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), personInfoList.size()));
-
-        List<SubjectMaxCount> list = SubjectMaxCount.read();
-
-        Map<String, SubjectMaxCount> map = new HashMap<>();
-
-        for (SubjectEnum value : SubjectEnum.values()) {
-            SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
-            SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
-            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-        }
-
-        for (SubjectMaxCount subjectMaxCount : list) {
-            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-        }
-
-        Set<String> subjectTypeSet = new HashSet<>();
-        for (PersonInfo personInfo : personInfoList) {
-            String subjectType = personInfo.getSubjectType();
-            if (StringUtils.isBlank(subjectType)) {
-                continue;
-            }
-            subjectTypeSet.add(subjectType);
-        }
-
-        SUBJECT_INFO_MAX_COUNT_LIST.clear();
-        for (String s : subjectTypeSet) {
-            SubjectMaxCount subjectMaxCount1 = map.get(s);
-            if (subjectMaxCount1 != null) {
-                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount1);
-            }
-        }
-        SUBJECT_INFO_MAX_COUNT_LIST.sort(Comparator.comparing(SubjectMaxCount::getSubjectType));
-        addInfo("读取考点配置数：%s".formatted(SUBJECT_INFO_MAX_COUNT_LIST.size()));
     }
 
     private void readRoomExcel(String filePath) {
-        personInfoList = Read.readRoomData(filePath);
-        List<String> valid = PersonInfo.valid(personInfoList);
-        String boo = valid.get(0);
-        valid.remove(0);
-        for (String s : valid) {
-            addInfo(s, false);
-        }
-        if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
-            addInfo("读取失败！请重新选择！");
-            personInfoList.clear();
+        List<ExamRoomInfo> examRoomInfoInfoList = Read.readRoomData(filePath);
+
+        if (CollectionUtils.isEmpty(examRoomInfoInfoList)) {
+            addInfo("没有试场信息，请检测模板填写是否正确");
             return;
         }
-        addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), personInfoList.size()));
 
-        List<SubjectMaxCount> list = SubjectMaxCount.read();
+        placeSubjectRoomInfoMap.clear();
 
-        Map<String, SubjectMaxCount> map = new HashMap<>();
-
-        for (SubjectEnum value : SubjectEnum.values()) {
-            SubjectMaxCount subjectMaxCount = new SubjectMaxCount(value.getSubjectType(), value.getSubjectTypeName());
-            SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount);
-            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-        }
-
-        for (SubjectMaxCount subjectMaxCount : list) {
-            map.put(subjectMaxCount.getSubjectType(), subjectMaxCount);
-        }
-
+        Set<String> placeIdSet = new HashSet<>();
         Set<String> subjectTypeSet = new HashSet<>();
-        for (PersonInfo personInfo : personInfoList) {
-            String subjectType = personInfo.getSubjectType();
-            if (StringUtils.isBlank(subjectType)) {
-                continue;
-            }
+        int totalRoomCount = 0;
+        for (ExamRoomInfo examRoomInfo : examRoomInfoInfoList) {
+            String examPlaceId = examRoomInfo.getExamPlaceId();
+            String subjectType = examRoomInfo.getSubjectType();
+
+            totalRoomCount += examRoomInfo.getRoomCount();
+            placeIdSet.add(examPlaceId);
             subjectTypeSet.add(subjectType);
+
+            Map<String, List<ExamRoomInfo>> subjectExamRoomInfoMap = placeSubjectRoomInfoMap.get(examPlaceId);
+            if (subjectExamRoomInfoMap == null) {
+                subjectExamRoomInfoMap = new HashMap<>();
+                List<ExamRoomInfo> examRoomInfos = new ArrayList<>();
+                examRoomInfos.add(examRoomInfo);
+                subjectExamRoomInfoMap.put(subjectType, examRoomInfos);
+                placeSubjectRoomInfoMap.put(examPlaceId, subjectExamRoomInfoMap);
+            } else {
+                List<ExamRoomInfo> examRoomInfos = subjectExamRoomInfoMap.get(subjectType);
+                if (CollectionUtils.isEmpty(examRoomInfos)) {
+                    examRoomInfos = new ArrayList<>();
+                    examRoomInfos.add(examRoomInfo);
+                    subjectExamRoomInfoMap.put(subjectType, examRoomInfos);
+                } else {
+                    examRoomInfos.add(examRoomInfo);
+                }
+            }
         }
 
-        SUBJECT_INFO_MAX_COUNT_LIST.clear();
-        for (String s : subjectTypeSet) {
-            SubjectMaxCount subjectMaxCount1 = map.get(s);
-            if (subjectMaxCount1 != null) {
-                SUBJECT_INFO_MAX_COUNT_LIST.add(subjectMaxCount1);
-            }
-        }
-        SUBJECT_INFO_MAX_COUNT_LIST.sort(Comparator.comparing(SubjectMaxCount::getSubjectType));
-        addInfo("读取考点配置数：%s".formatted(SUBJECT_INFO_MAX_COUNT_LIST.size()));
+        addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), examRoomInfoInfoList.size()));
+        addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
     }
 
     public void addInfo(String s) {

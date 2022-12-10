@@ -57,7 +57,7 @@ public class SubjectInfo {
         for (List<PersonInfo> infoList : partition) {
             String roomNo = reset || StringUtils.isBlank(infoList.get(0).getRoomNo()) ? String.format("%03d", count) : infoList.get(0).getRoomNo();
             PersonInfo.buildSeatNo(infoList, roomNo, random);
-            ExamRoomInfo examRoomInfo = new ExamRoomInfo(getMaxCount(), infoList);
+            ExamRoomInfo examRoomInfo = new ExamRoomInfo(getMaxCount(), Collections.singletonList(infoList));
             examRoomInfo.setRoomName(roomNo);
             count++;
             examRoomInfoList.add(examRoomInfo);

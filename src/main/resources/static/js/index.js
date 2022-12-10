@@ -6,7 +6,7 @@ let app = new Vue({
         personTableList: [],
         colCount: 6,
         infoFontSize: 16,
-        examPlaceInfoList: [],
+        examPlaceInfoList: [new ExamPlaceInfo()],
         colCountTmp: 0,
         picHost: "",
         subjectInfoMaxCountList: [],
@@ -23,8 +23,10 @@ let app = new Vue({
         ticketImgWidth: 120,
         ticketRow: 0,
         ticketTitle: "浙江省高校招生职业技能操作考试",
+        examRoomInfoList: [],
     },
     created() {
+        this.examPlaceInfoList = [];
         this.imgHeight = this.imgWidth * 1.4;
         document.documentElement.style.fontSize = this.infoFontSize + "px";
         this.picHost = window.location.origin + "/";
@@ -34,7 +36,7 @@ let app = new Vue({
     methods: {
         change: function () {
             let url = "updateMaxCount";
-            axios.post(url, this.subjectInfoMaxCountList).then((res) => {
+            axios.post(url, this.examRoomInfoList).then((res) => {
                 console.log(res.data);
             });
         },
@@ -63,24 +65,21 @@ let app = new Vue({
                 this.changeTab("核对单列表");
                 let allExamInfo = new AllExamInfo(res.data);
                 this.examPlaceInfoList = [];
-                for (let key in allExamInfo.list) {
-                    let examPlaceInfo = new ExamPlaceInfo(allExamInfo.list[key]);
-                    this.examPlaceInfoList.push(examPlaceInfo);
+                for (let i = 0; i < allExamInfo.list.length; i++) {
+                    this.examPlaceInfoList.push(allExamInfo.list[i]);
                 }
             });
         },
         getSubjectInfoMaxCountList: function () {
             let url = "getSubjectInfoMaxCountList";
             axios.get(url).then((res) => {
-                let allExamInfo = new AllExamInfo(res.data);
-                let subjectInfoList = res.data;
-                this.subjectInfoMaxCountList = [];
-                this.subjectInfoMaxCountMap = {};
-                for (let key in subjectInfoList) {
-                    let subjectInfo = new SubjectInfo(subjectInfoList[key]);
-                    this.subjectInfoMaxCountList.push(subjectInfo);
-
-                    this.subjectInfoMaxCountMap[subjectInfo.subjectType] = subjectInfo;
+                let list = res.data;
+                if (list == null || list.length === 0) {
+                    return;
+                }
+                this.examRoomInfoList = [];
+                for (let i = 0; i < list.length; i++) {
+                    this.examRoomInfoList.push(new ExamRoomInfo(list[i]));
                 }
             });
         },
@@ -95,6 +94,9 @@ let app = new Vue({
                 }
             }).then((res) => {
             });
+        },
+        log: function (data) {
+            console.log(data);
         },
     },
 

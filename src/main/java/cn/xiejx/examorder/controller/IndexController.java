@@ -1,20 +1,23 @@
 package cn.xiejx.examorder.controller;
 
-import cn.xiejx.examorder.entity.*;
+import cn.xiejx.examorder.entity.AllExamInfo;
+import cn.xiejx.examorder.entity.ExamPlaceInfo;
+import cn.xiejx.examorder.entity.ExamRoomInfo;
+import cn.xiejx.examorder.entity.PersonInfo;
 import cn.xiejx.examorder.fxml.IndexFxml;
 import com.alibaba.excel.EasyExcel;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * There is description
@@ -35,7 +38,7 @@ public class IndexController {
         for (PersonInfo personInfo : IndexFxml.personInfoList) {
             personInfoListCopy.add(personInfo.copy());
         }
-        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST, random);
+        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, IndexFxml.placeSubjectRoomInfoMap, random);
         allExamInfo.setList(examPlaceInfoList);
         allExamInfo.processPicSrc(IndexFxml.picPath);
 
@@ -45,15 +48,45 @@ public class IndexController {
     }
 
     @RequestMapping("/getSubjectInfoMaxCountList")
-    public List<SubjectMaxCount> getSubjectInfoMaxCountList() {
-        return IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST;
+    public List<ExamRoomInfo> getSubjectInfoMaxCountList() {
+        List<ExamRoomInfo> res = new ArrayList<>();
+        for (Map<String, List<ExamRoomInfo>> map : IndexFxml.placeSubjectRoomInfoMap.values()) {
+            for (List<ExamRoomInfo> list : map.values()) {
+                res.addAll(list);
+            }
+        }
+        res.sort(Comparator.comparing(ExamRoomInfo::getId));
+        return res;
     }
 
     @RequestMapping("/updateMaxCount")
-    public Boolean updateMaxCount(@RequestBody List<SubjectMaxCount> list) {
-        IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST.clear();
-        IndexFxml.SUBJECT_INFO_MAX_COUNT_LIST.addAll(list);
-        SubjectMaxCount.write(list);
+    public Boolean updateMaxCount(@RequestBody List<ExamRoomInfo> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+
+        for (ExamRoomInfo examRoomInfo : list) {
+            String examPlaceId = examRoomInfo.getExamPlaceId();
+            String subjectType = examRoomInfo.getSubjectType();
+            Map<String, List<ExamRoomInfo>> map = IndexFxml.placeSubjectRoomInfoMap.get(examPlaceId);
+            if (MapUtils.isEmpty(map)) {
+                continue;
+            }
+            List<ExamRoomInfo> examRoomInfos = map.get(subjectType);
+            if (CollectionUtils.isEmpty(examRoomInfos)) {
+                continue;
+            }
+            for (ExamRoomInfo roomInfo : examRoomInfos) {
+                if (roomInfo.getId().equals(examRoomInfo.getId())) {
+                    roomInfo.setTime(examRoomInfo.getTime());
+                    roomInfo.setRoomCount(examRoomInfo.getRoomCount());
+                    roomInfo.setMaxCount(examRoomInfo.getMaxCount());
+                    roomInfo.setRoomName(examRoomInfo.getRoomName());
+                    break;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -62,9 +95,9 @@ public class IndexController {
         List<PersonInfo> data = new ArrayList<>();
         List<ExamPlaceInfo> list = allExamInfo.getList();
         for (ExamPlaceInfo examPlaceInfo : list) {
-            for (SubjectInfo subjectInfo : examPlaceInfo.getList()) {
-                for (ExamRoomInfo examRoomInfo : subjectInfo.getExamRoomInfoList()) {
-                    data.addAll(examRoomInfo.getList());
+            for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
+                for (List<PersonInfo> personInfos : examRoomInfo.getList()) {
+                    data.addAll(personInfos);
                 }
             }
         }
@@ -78,7 +111,7 @@ public class IndexController {
                 new FileChooser.ExtensionFilter("xlsx", "*.xlsx")
         );
 
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
             File file = fileChooser.showSaveDialog(new Stage());
             if (file == null) {
                 return;

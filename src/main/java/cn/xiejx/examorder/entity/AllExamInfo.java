@@ -34,19 +34,13 @@ public class AllExamInfo {
         }
 
         for (ExamPlaceInfo examPlaceInfo : list) {
-            List<SubjectInfo> subjectInfoList = examPlaceInfo.getList();
-            for (SubjectInfo subjectInfo : subjectInfoList) {
-                for (PersonInfo personInfo : subjectInfo.getPersonInfoList()) {
-                    personInfo.buildPicSrc(fileNameMap);
+            List<ExamRoomInfo> examRoomInfos = examPlaceInfo.getList();
+            for (ExamRoomInfo examRoomInfo : examRoomInfos) {
+                for (List<PersonInfo> personInfoList : examRoomInfo.getList()) {
+                    for (PersonInfo personInfo : personInfoList) {
+                        personInfo.buildPicSrc(fileNameMap);
+                    }
                 }
-            }
-        }
-    }
-
-    public void hidePersonInfo() {
-        for (ExamPlaceInfo examPlaceInfo : list) {
-            for (SubjectInfo subjectInfo : examPlaceInfo.getList()) {
-                subjectInfo.setPersonInfoList(null);
             }
         }
     }

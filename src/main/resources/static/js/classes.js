@@ -19,7 +19,13 @@ class AllExamInfo {
             return;
         }
 
-        this.list = props.list;
+        let tmpList = props.list;
+        this.list = [];
+        if (tmpList != null && tmpList.length >= 0) {
+            for (let i = 0; i < tmpList.length; i++) {
+                this.list.push(new ExamPlaceInfo(tmpList[i]));
+            }
+        }
     }
 }
 
@@ -30,7 +36,14 @@ class ExamPlaceInfo {
         }
 
         this.examPlaceName = props.examPlaceName;
-        this.list = props.list;
+        let tmpList = props.list;
+        this.list = [new ExamRoomInfo()];
+        this.list = [];
+        if (tmpList != null && tmpList.length >= 0) {
+            for (let i = 0; i < tmpList.length; i++) {
+                this.list.push(new ExamRoomInfo(tmpList[i]));
+            }
+        }
     }
 }
 
@@ -56,9 +69,29 @@ class ExamRoomInfo {
             return;
         }
 
+        this.id = props.id;
+        this.examPlaceId = props.examPlaceId;
+        this.examPlaceName = props.examPlaceName;
+        this.subjectType = props.subjectType;
         this.subjectName = props.subjectName;
         this.roomName = props.roomName;
-        this.list = props.list;
+        this.roomCount = props.roomCount;
+        this.time = props.time;
         this.maxCount = props.maxCount == null ? 30 : props.maxCount;
+
+        let tmpList = props.list;
+        this.list = [[new PersonInfo()]];
+        this.list = [];
+        if (tmpList != null && tmpList.length >= 0) {
+            for (let i = 0; i < tmpList.length; i++) {
+                let p = [];
+                let perList = tmpList[i];
+                if (perList != null && perList.length >= 0) {
+                    p.push(new PersonInfo(perList[i]));
+                }
+
+                this.list.push(p);
+            }
+        }
     }
 }

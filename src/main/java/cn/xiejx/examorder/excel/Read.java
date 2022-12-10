@@ -37,6 +37,6 @@ public class Read {
     public static List<ExamRoomInfo> readRoomData(String fileName) {
         ExamRoomInfoExcelListener<ExamRoomInfo> readListener = new ExamRoomInfoExcelListener<>();
         EasyExcel.read(fileName, ExamRoomInfo.class, readListener).sheet().doRead();
-        return readListener.getData();
+        return ExamRoomInfo.buildIndex(readListener.getData());
     }
 }

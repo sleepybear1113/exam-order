@@ -5,9 +5,13 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * There is description
@@ -21,35 +25,46 @@ import java.util.List;
 public class ExamRoomInfo {
     public static final String OPTION_BLANK = "#选填";
 
+    @ExcelIgnore
+    private Integer id;
     @ExcelProperty("考点代码")
     private String examPlaceId;
+    @ExcelProperty("考点名称")
+    private String examPlaceName;
     @ExcelProperty("类别代码")
     private String subjectType;
+    @ExcelProperty("类别名称")
+    private String subjectName;
     @ExcelProperty("容纳人数")
+    private String maxCountStr;
+    @ExcelIgnore
     private Integer maxCount;
     @ExcelProperty("试场数")
+    private String roomCountStr;
+    @ExcelIgnore
     private Integer roomCount;
     @ExcelProperty("试场号")
     private String roomName;
     @ExcelProperty("考试时间")
     private String time;
     @ExcelIgnore
-    private List<PersonInfo> list;
+    private List<List<PersonInfo>> list;
 
-    public ExamRoomInfo(Integer maxCount, List<PersonInfo> list) {
+    public ExamRoomInfo(Integer maxCount, List<List<PersonInfo>> list) {
         this.maxCount = maxCount;
         this.list = list;
     }
 
     public void setExamPlaceId(String examPlaceId) {
-        if (StringUtils.isNotBlank(examPlaceId) && examPlaceId.startsWith(OPTION_BLANK)) {
+        if (StringUtils.isBlank(examPlaceId) || examPlaceId.startsWith(OPTION_BLANK)) {
+            this.examPlaceId = null;
             return;
         }
         this.examPlaceId = examPlaceId;
     }
 
-    public void setMaxCount(String maxCount) {
-        if (StringUtils.isNotBlank(maxCount) && maxCount.startsWith(OPTION_BLANK)) {
+    public void setMaxCountStr(String maxCount) {
+        if (StringUtils.isBlank(maxCount) || maxCount.startsWith(OPTION_BLANK)) {
             this.maxCount = 30;
             return;
         }
@@ -60,8 +75,30 @@ public class ExamRoomInfo {
         this.maxCount = Integer.valueOf(maxCount);
     }
 
-    public void setRoomCount(String roomCount) {
-        if (StringUtils.isNotBlank(roomCount) && roomCount.startsWith(OPTION_BLANK)) {
+    public void setSubjectType(String subjectType) {
+        this.subjectType = subjectType;
+        String typeName = SubjectEnum.getTypeName(subjectType);
+        if (StringUtils.isBlank(typeName)) {
+            return;
+        }
+        this.subjectName = typeName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        if (StringUtils.isBlank(subjectName) || subjectName.startsWith(OPTION_BLANK)) {
+            if (StringUtils.isNotBlank(this.subjectName)) {
+                return;
+            }
+        }
+        this.subjectName = subjectName;
+    }
+
+    public String getMaxCountStr() {
+        return String.valueOf(maxCount);
+    }
+
+    public void setRoomCountStr(String roomCount) {
+        if (StringUtils.isBlank(roomCount) || roomCount.startsWith(OPTION_BLANK)) {
             this.roomCount = 100;
             return;
         }
@@ -72,17 +109,62 @@ public class ExamRoomInfo {
         this.roomCount = Integer.valueOf(roomCount);
     }
 
+    public String getRoomCountStr() {
+        return String.valueOf(roomCount);
+    }
+
     public void setRoomName(String roomName) {
-        if (StringUtils.isNotBlank(roomName) && roomName.startsWith(OPTION_BLANK)) {
+        if (StringUtils.isBlank(roomName) || roomName.startsWith(OPTION_BLANK)) {
+            this.roomName = null;
             return;
         }
         this.roomName = roomName;
     }
 
     public void setTime(String time) {
-        if (StringUtils.isNotBlank(time) && time.startsWith(OPTION_BLANK)) {
+        if (StringUtils.isBlank(time) || time.startsWith(OPTION_BLANK)) {
+            this.time = null;
             return;
         }
         this.time = time;
+    }
+
+    public static List<ExamRoomInfo> buildIndex(List<ExamRoomInfo> examRoomInfoList) {
+        if (CollectionUtils.isEmpty(examRoomInfoList)) {
+            return examRoomInfoList;
+        }
+        int index = 0;
+        for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
+            examRoomInfo.setId(++index);
+        }
+        return examRoomInfoList;
+    }
+
+    public static void buildExamRoom(List<ExamRoomInfo> examRoomInfoList, List<PersonInfo> personInfoList, Long random) {
+        if (CollectionUtils.isEmpty(examRoomInfoList) || CollectionUtils.isEmpty(personInfoList)) {
+            return;
+        }
+
+        // 是否重置座位号等
+        boolean reset = random != null && random > 0;
+        if (reset) {
+            Collections.shuffle(personInfoList, new Random(random));
+        }
+
+        int startIndex = 0;
+        for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
+            Integer roomCount = examRoomInfo.getRoomCount();
+            Integer maxCount = examRoomInfo.getMaxCount();
+
+            examRoomInfo.list = new ArrayList<>(roomCount);
+            for (int i = 0; i < roomCount; i++) {
+                if (startIndex >= personInfoList.size()) {
+                    break;
+                }
+                List<PersonInfo> subList = personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + maxCount));
+                examRoomInfo.list.add(new ArrayList<>(subList));
+                startIndex += maxCount;
+            }
+        }
     }
 }
