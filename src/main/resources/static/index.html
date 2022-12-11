@@ -12,7 +12,6 @@
     .info {
         margin-right: 10px;
         margin-top: 5px;
-        margin-bottom: -2px;
         font-family: 宋体, serif;
     }
 
@@ -27,7 +26,7 @@
 
     .table-title {
         font-size: 30px;
-        margin: 0;
+        margin: 10px;
         font-family: 黑体, serif;
     }
 
@@ -45,6 +44,10 @@
     .middle {
         margin: auto;
     }
+
+    #container p {
+        line-height: 19px;
+    }
 </style>
 <body>
 <div id="app">
@@ -53,9 +56,9 @@
         <div style="display: flex">
             <div id="table" style="float: left; border-right: black 1px solid;">
                 <h3>
-                    数量信息设置
+                    数量时间信息临时设置
                 </h3>
-                <button v-on:click="change()">修改数量</button>
+                <button v-on:click="change()">保存下述内容</button>
 
                 <table>
                     <thead>
@@ -238,7 +241,7 @@
         <hr>
     </div>
 
-    <div style="display: flex">
+    <div id="container" style="display: flex">
         <div id="tables2" class="print middle" v-if="tab === '核对单列表'">
 
             <!--全部考点遍历-->
@@ -251,7 +254,7 @@
                     <template v-for="(personInfoList, index) in examRoomInfo.list">
                         <table>
                             <caption>
-                                <div style="margin-bottom: -5px;">
+                                <div style="margin-bottom: 8px;">
                                     <p class="table-title">{{tableTitle}}</p>
                                     <!--考点-科目-试场号-->
                                     <span class="check-caption" style="float: left">
@@ -261,7 +264,7 @@
                                             {{examRoomInfo.subjectName}}({{examRoomInfo.subjectType}})
                                         </span>
                                     <span class="check-caption" style="float: right">
-                                            试场：{{examRoomInfo.roomName}}
+                                            试场：{{examRoomInfo.roomNoList[index]}}
                                         </span>
                                 </div>
                             </caption>
@@ -314,15 +317,18 @@
                 <template v-for="examRoomInfo in examPlaceInfo.list">
                     <!--所有试场取出单个科目的试场合集-->
 
-                    <template v-for="oneRoomPersons in examRoomInfo.list">
+                    <template v-for="(oneRoomPersons, index) in examRoomInfo.list">
                         <template v-for="row in Math.ceil(oneRoomPersons.length / ticketColCount)">
                             <table>
                                 <tr>
                                     <template
                                             v-for="(person, col) in oneRoomPersons.slice((row - 1) * ticketColCount, row * ticketColCount)">
                                         <td>
-                                            <h2 style="text-align: center">{{ticketTitle}}</h2>
-                                            <h2 style="text-align: center; margin-top: -15px">{{examName}}</h2>
+                                            <div>
+                                                <h2 style="text-align: center">{{ticketTitle}}</h2>
+                                                <h2 style="text-align: center; margin-top: -15px">{{examName}}</h2>
+                                            </div>
+
                                             <div style="margin-right: 20px; width: 535px; float: left">
                                                 <div style="float: right">
                                                     <img :src="picHost + person.picSrc" alt=""
@@ -340,7 +346,7 @@
                                                     <p class="ticket-p">
                                                         类别：{{person.subjectTypeName}}{{addPrefixZero(person.subjectTypeName.length,
                                                             4)}} 试场号：{{person.roomNo}}&nbsp;座位号：{{person.seatNo}}</p>
-                                                    <p class="ticket-p" v-show="person.time !== ''">
+                                                    <p class="ticket-p" v-show="person.time != null && person.time !== ''">
                                                         时间：{{person.time}}
                                                     </p>
                                                 </div>
@@ -357,26 +363,29 @@
                                 </tr>
                             </table>
 
-                            <template v-if="row % 4 === 0">
+                            <template v-if="row % 4 === 0 && (row < Math.ceil(oneRoomPersons.length / ticketColCount) || index < examRoomInfo.list.length - 1)">
                                 <div class="no-print">
                                     <hr>
                                 </div>
                                 <div style="page-break-after: always;"></div>
-                                {{33333333}}
                             </template>
                         </template>
 
+
+                        <template v-if="(Math.ceil(oneRoomPersons.length / ticketColCount) % 4 !== 0) && index < examRoomInfo.list.length - 1">
+                            <div class="no-print">
+                                <hr>
+                            </div>
+                            <div style="page-break-after:always;"></div>
+                        </template>
+                    </template>
+
+                    <template v-if="examRoomInfo.list != null && examRoomInfo.list.length > 0">
                         <div class="no-print">
                             <hr>
                         </div>
                         <div style="page-break-after:always;"></div>
                     </template>
-
-                    {{444444}}
-                    <div class="no-print">
-                        <hr>
-                    </div>
-                    <div style="page-break-after:always;"></div>
                 </template>
             </template>
         </div>

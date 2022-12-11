@@ -45,6 +45,7 @@ public class ExamPlaceInfo {
         }
 
         List<ExamPlaceInfo> examPlaceInfoList = new ArrayList<>();
+        final int[] roomIndex = {0};
         personInfoExamPlaceNameMap.forEach((examPlaceId, personInfos) -> {
             // 遍历考点学校
             Map<String, List<PersonInfo>> subjectPersonInfoMap = new HashMap<>();
@@ -56,6 +57,7 @@ public class ExamPlaceInfo {
 
             Map<String, List<ExamRoomInfo>> subjectExamRoomInfoMap = placeSubjectRoomInfoMap.get(examPlaceId);
             if (subjectExamRoomInfoMap == null) {
+                examPlaceId = null;
                 subjectExamRoomInfoMap = placeSubjectRoomInfoMap.get(null);
             }
 
@@ -67,12 +69,12 @@ public class ExamPlaceInfo {
             for (String subject : subjectExamRoomInfoMap.keySet()) {
                 List<ExamRoomInfo> examRoomInfos = subjectExamRoomInfoMap.get(subject);
                 for (ExamRoomInfo examRoomInfo : examRoomInfos) {
-                    if (examRoomInfo.getExamPlaceId() == null) {
+                    if (examRoomInfo.getExamPlaceId() == null && examPlaceId != null) {
                         examRoomInfo.setExamPlaceId(examPlaceId);
                     }
                 }
                 List<PersonInfo> personList = subjectPersonInfoMap.get(subject);
-                ExamRoomInfo.buildExamRoom(examRoomInfos, personList, random);
+                roomIndex[0] = ExamRoomInfo.buildExamRoom(examRoomInfos, personList, roomIndex[0], random);
 
                 String examPlaceName = examRoomInfos.get(0).getExamPlaceName();
                 examPlaceInfoList.add(new ExamPlaceInfo(examPlaceName, examPlaceId, examRoomInfos));

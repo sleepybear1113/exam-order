@@ -4,7 +4,7 @@ class PersonInfo {
             return;
         }
 
-        this.picSrc = props.picSrc == null || props.picSrc === "" ? null : window.location.origin + props.picSrc;
+        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "" : window.location.origin + props.picSrc;
         this.id = props.id;
         this.name = props.name;
         this.sex = props.sex;
@@ -43,6 +43,7 @@ class ExamPlaceInfo {
         }
 
         this.examPlaceName = props.examPlaceName;
+        this.examPlaceId = props.examPlaceId;
         let tmpList = props.list;
         this.list = [new ExamRoomInfo()];
         this.list = [];
@@ -53,22 +54,6 @@ class ExamPlaceInfo {
         }
     }
 }
-
-class SubjectInfo {
-    constructor(props) {
-        if (props == null) {
-            return;
-        }
-
-        this.subjectType = props.subjectType;
-        this.subjectTypeName = props.subjectTypeName;
-        this.personInfoList = props.personInfoList;
-        this.examRoomInfoList = props.examRoomInfoList;
-        this.maxCount = props.maxCount == null ? 30 : props.maxCount;
-        this.time = "";
-    }
-}
-
 
 class ExamRoomInfo {
     constructor(props) {
@@ -100,6 +85,15 @@ class ExamRoomInfo {
                 }
 
                 this.list.push(p);
+            }
+        }
+
+        let roomNoTmpList = props.roomNoList;
+        this.roomNoList = [""];
+        this.roomNoList = [];
+        if (roomNoTmpList != null && roomNoTmpList.length >= 0) {
+            for (let i = 0; i < roomNoTmpList.length; i++) {
+                this.roomNoList.push(roomNoTmpList[i]);
             }
         }
     }

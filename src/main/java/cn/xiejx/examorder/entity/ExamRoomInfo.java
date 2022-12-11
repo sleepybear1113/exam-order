@@ -50,6 +50,9 @@ public class ExamRoomInfo {
     @ExcelIgnore
     private List<List<PersonInfo>> list;
 
+    @ExcelIgnore
+    private List<String> roomNoList = new ArrayList<>();
+
     public ExamRoomInfo(Integer maxCount, List<List<PersonInfo>> list) {
         this.maxCount = maxCount;
         this.list = list;
@@ -140,9 +143,9 @@ public class ExamRoomInfo {
         return examRoomInfoList;
     }
 
-    public static void buildExamRoom(List<ExamRoomInfo> examRoomInfoList, List<PersonInfo> personInfoList, Long random) {
+    public static int buildExamRoom(List<ExamRoomInfo> examRoomInfoList, List<PersonInfo> personInfoList, int roomIndex, Long random) {
         if (CollectionUtils.isEmpty(examRoomInfoList) || CollectionUtils.isEmpty(personInfoList)) {
-            return;
+            return 0;
         }
 
         // 是否重置座位号等
@@ -156,7 +159,8 @@ public class ExamRoomInfo {
             Integer roomCount = examRoomInfo.getRoomCount();
             Integer maxCount = examRoomInfo.getMaxCount();
 
-            examRoomInfo.list = new ArrayList<>(roomCount);
+            examRoomInfo.setList(new ArrayList<>(roomCount));
+            examRoomInfo.setRoomNoList(new ArrayList<>(roomCount));
             for (int i = 0; i < roomCount; i++) {
                 if (startIndex >= personInfoList.size()) {
                     break;
@@ -164,10 +168,16 @@ public class ExamRoomInfo {
                 List<PersonInfo> subList = personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + maxCount));
                 List<PersonInfo> personInfos = new ArrayList<>(subList);
 
-                PersonInfo.buildSeatNo(personInfos, "", random, examRoomInfo.time);
-                examRoomInfo.list.add(personInfos);
+                ++roomIndex;
+                String roomNo = String.format("%03d", roomIndex);
+
+                PersonInfo.buildSeatNo(personInfos, roomNo, random, examRoomInfo.getTime());
+                personInfos.forEach(personInfo -> personInfo.setExamPlaceName(examRoomInfo.getExamPlaceName()));
+                examRoomInfo.getList().add(personInfos);
+                examRoomInfo.getRoomNoList().add(roomNo);
                 startIndex += maxCount;
             }
         }
+        return roomIndex;
     }
 }

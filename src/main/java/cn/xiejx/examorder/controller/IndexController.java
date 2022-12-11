@@ -70,7 +70,13 @@ public class IndexController {
             String subjectType = examRoomInfo.getSubjectType();
             Map<String, List<ExamRoomInfo>> map = IndexFxml.placeSubjectRoomInfoMap.get(examPlaceId);
             if (MapUtils.isEmpty(map)) {
-                continue;
+                if (IndexFxml.placeSubjectRoomInfoMap.size() != 1) {
+                    continue;
+                }
+                map = IndexFxml.placeSubjectRoomInfoMap.get(null);
+                if (MapUtils.isEmpty(map)) {
+                    continue;
+                }
             }
             List<ExamRoomInfo> examRoomInfos = map.get(subjectType);
             if (CollectionUtils.isEmpty(examRoomInfos)) {
@@ -94,8 +100,14 @@ public class IndexController {
     public Boolean exportExcel(String exportFileName) {
         List<PersonInfo> data = new ArrayList<>();
         List<ExamPlaceInfo> list = allExamInfo.getList();
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
         for (ExamPlaceInfo examPlaceInfo : list) {
             for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
+                if (CollectionUtils.isEmpty(examRoomInfo.getList())) {
+                    continue;
+                }
                 for (List<PersonInfo> personInfos : examRoomInfo.getList()) {
                     data.addAll(personInfos);
                 }
