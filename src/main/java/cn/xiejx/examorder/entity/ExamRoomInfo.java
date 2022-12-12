@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * There is description
@@ -48,7 +45,7 @@ public class ExamRoomInfo {
     @ExcelProperty("考试时间")
     private String time;
     @ExcelIgnore
-    private List<List<PersonInfo>> list;
+    private List<List<PersonInfo>> list = new ArrayList<>();
 
     @ExcelIgnore
     private List<String> roomNoList = new ArrayList<>();
@@ -122,6 +119,22 @@ public class ExamRoomInfo {
             return;
         }
         this.roomName = roomName;
+        this.roomNoList = List.of(roomName.replace("，", ",").split(","));
+    }
+
+    public void clearInvalidRoomName() {
+        if (CollectionUtils.isEmpty(this.roomNoList) || this.roomCount == null) {
+            return;
+        }
+        this.roomNoList = new ArrayList<>(new HashSet<>(this.roomNoList));
+        if (this.roomNoList.size() == this.roomCount) {
+            return;
+        }
+        if (this.roomCount > this.roomNoList.size()) {
+            this.roomNoList = new ArrayList<>();
+        } else {
+            this.roomNoList = new ArrayList<>(this.roomNoList.subList(0, this.roomCount));
+        }
     }
 
     public void setTime(String time) {

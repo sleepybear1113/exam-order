@@ -38,6 +38,9 @@ public class IndexController {
         for (PersonInfo personInfo : IndexFxml.personInfoList) {
             personInfoListCopy.add(personInfo.copy());
         }
+
+        IndexFxml.placeSubjectRoomInfoMap.values().forEach(map -> map.values().forEach(examRoomInfoList -> examRoomInfoList.forEach(examRoomInfo -> examRoomInfo.setList(new ArrayList<>()))));
+
         List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, IndexFxml.placeSubjectRoomInfoMap, random);
         allExamInfo.setList(examPlaceInfoList);
         allExamInfo.processPicSrc(IndexFxml.picPath);

@@ -50,7 +50,6 @@ public class IndexFxml {
     public static List<PersonInfo> personInfoList = new ArrayList<>();
 
     public static Map<String, Map<String, List<ExamRoomInfo>>> placeSubjectRoomInfoMap = new HashMap<>();
-    public static final List<SubjectMaxCount> SUBJECT_INFO_MAX_COUNT_LIST = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -166,6 +165,7 @@ public class IndexFxml {
             addInfo("没有试场信息，请检测模板填写是否正确");
             return;
         }
+        examRoomInfoInfoList.forEach(ExamRoomInfo::clearInvalidRoomName);
 
         placeSubjectRoomInfoMap.clear();
 
