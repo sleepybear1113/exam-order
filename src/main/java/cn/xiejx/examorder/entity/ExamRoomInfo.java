@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 
@@ -44,8 +45,15 @@ public class ExamRoomInfo {
     private String roomName;
     @ExcelProperty("考试时间")
     private String time;
+
+    @ExcelIgnore
+    private Boolean detail = false;
     @ExcelIgnore
     private List<List<PersonInfo>> list = new ArrayList<>();
+    @ExcelIgnore
+    private List<PersonInfo> persons = new ArrayList<>();
+    @ExcelIgnore
+    private List<ExamRoomInfo> roomList = new ArrayList<>();
 
     @ExcelIgnore
     private List<String> roomNoList = new ArrayList<>();
@@ -158,7 +166,7 @@ public class ExamRoomInfo {
 
     public static int buildExamRoom(List<ExamRoomInfo> examRoomInfoList, List<PersonInfo> personInfoList, int roomIndex, Long random) {
         if (CollectionUtils.isEmpty(examRoomInfoList) || CollectionUtils.isEmpty(personInfoList)) {
-            return 0;
+            return roomIndex;
         }
 
         // 是否重置座位号等
@@ -167,30 +175,84 @@ public class ExamRoomInfo {
             Collections.shuffle(personInfoList, new Random(random));
         }
 
+        Map<String, List<PersonInfo>> roomPersonMap = new HashMap<>();
+        for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
+            if (StringUtils.isBlank(examRoomInfo.getRoomName())) {
+                continue;
+            }
+            roomPersonMap.put(examRoomInfo.getRoomName(), new ArrayList<>());
+        }
+        personInfoList.removeIf(personInfo -> {
+            String roomNo = personInfo.getRoomNo();
+            if (StringUtils.isBlank(roomNo)) {
+                return false;
+            }
+            List<PersonInfo> personInfos = roomPersonMap.get(roomNo);
+            if (personInfos == null) {
+                return false;
+            }
+            personInfos.add(personInfo);
+            return true;
+        });
+
         int startIndex = 0;
         for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
-            Integer roomCount = examRoomInfo.getRoomCount();
-            Integer maxCount = examRoomInfo.getMaxCount();
+            for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
+                String name = roomInfo.getRoomName();
+                Integer maxCount = roomInfo.getMaxCount();
 
-            examRoomInfo.setList(new ArrayList<>(roomCount));
-            examRoomInfo.setRoomNoList(new ArrayList<>(roomCount));
-            for (int i = 0; i < roomCount; i++) {
+                // 将特定试场的先装入
+                List<PersonInfo> personInfos = roomPersonMap.get(name);
+                if (CollectionUtils.isNotEmpty(personInfos)) {
+                    roomInfo.getPersons().addAll(personInfos.subList(0, Math.min(personInfos.size(), maxCount)));
+                }
+            }
+
+            if (CollectionUtils.isEmpty(personInfoList)) {
+                continue;
+            }
+
+            for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
                 if (startIndex >= personInfoList.size()) {
                     break;
                 }
-                List<PersonInfo> subList = personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + maxCount));
-                List<PersonInfo> personInfos = new ArrayList<>(subList);
 
-                ++roomIndex;
-                String roomNo = String.format("%03d", roomIndex);
-
-                PersonInfo.buildSeatNo(personInfos, roomNo, random, examRoomInfo.getTime());
-                personInfos.forEach(personInfo -> personInfo.setExamPlaceName(examRoomInfo.getExamPlaceName()));
-                examRoomInfo.getList().add(personInfos);
-                examRoomInfo.getRoomNoList().add(roomNo);
-                startIndex += maxCount;
+                int leftCount = roomInfo.getMaxCount() - roomInfo.getPersons().size();
+                if (leftCount <= 0) {
+                    continue;
+                }
+                List<PersonInfo> subList = new ArrayList<>(personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + leftCount)));
+                roomInfo.getPersons().addAll(subList);
+                String roomNo = StringUtils.isBlank(roomInfo.getRoomName()) ? "%03d".formatted(roomIndex++) : roomInfo.getRoomName();
+                PersonInfo.buildSeatNo(roomInfo.getPersons(), roomNo, random, examRoomInfo.getTime());
+                roomInfo.getPersons().forEach(personInfo -> personInfo.setExamPlaceName(examRoomInfo.getExamPlaceName()));
+                roomInfo.setRoomName(roomNo);
+                startIndex += leftCount;
             }
         }
+
         return roomIndex;
+    }
+
+    public void buildDetail() {
+        if (this.roomCount == null || this.roomCount <= 0) {
+            return;
+        }
+        this.roomList = new ArrayList<>();
+        ExamRoomInfo copy = new ExamRoomInfo();
+        BeanUtils.copyProperties(this, copy);
+
+        for (int i = 0; i < this.roomCount; i++) {
+            ExamRoomInfo e = new ExamRoomInfo();
+            BeanUtils.copyProperties(copy, e);
+            e.setPersons(new ArrayList<>());
+            e.setDetail(true);
+            e.setRoomNoList(new ArrayList<>(copy.getRoomNoList()));
+            e.setRoomList(null);
+            if (CollectionUtils.isNotEmpty(this.roomNoList)) {
+                e.setRoomName(copy.getRoomNoList().get(i));
+            }
+            this.roomList.add(e);
+        }
     }
 }

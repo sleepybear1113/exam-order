@@ -2,7 +2,6 @@ package cn.xiejx.examorder.fxml;
 
 import cn.xiejx.examorder.entity.ExamRoomInfo;
 import cn.xiejx.examorder.entity.PersonInfo;
-import cn.xiejx.examorder.entity.SubjectMaxCount;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.SpringContextUtil;
 import javafx.application.Platform;
@@ -21,10 +20,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -61,11 +63,43 @@ public class IndexFxml {
             addInfo("没有有效的考生数据！请重新选择Excel文件！");
             return;
         }
+
         addInfo("打开浏览器...");
         Environment environment = SpringContextUtil.getBean(Environment.class);
         String port = environment.getProperty("server.port");
         String url = "http://127.0.0.1:%s".formatted(port);
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+        try {
+            String osName = System.getProperty("os.name", "");
+            if (osName.startsWith("Mac OS")) {
+                Class.forName("com.apple.eio.FileManager").getDeclaredMethod("openURL", String.class).invoke(null, url);
+            } else if (osName.startsWith("Windows")) {
+                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    URI uri = new URI(url);
+                    Desktop.getDesktop().browse(uri);
+                } else {
+                    Runtime rt = Runtime.getRuntime();
+                    StringBuilder cmd = new StringBuilder();
+                    String[] browsers = {"google-chrome", "firefox", "mozilla", "epiphany", "konqueror",
+                            "netscape", "opera", "links", "lynx"};
+                    for (String browser : browsers) {
+                        cmd.append(String.format("%s \"%s\" || ", browser, url));
+                    }
+                    if (cmd.length() > 0) {
+                        rt.exec(new String[]{"sh", "-c", cmd.substring(0, cmd.length() - 3)});
+                    } else {
+                        addInfo("打开浏览器失败！");
+                        addInfo("请手动打开浏览器，并且输入以下网址：");
+                        addInfo(url.replace("http://", ""));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            addInfo("打开浏览器失败！");
+            addInfo("请手动打开浏览器，并且输入以下网址：");
+            addInfo(url.replace("http://", ""));
+        }
     }
 
     public void choosePicDir(ActionEvent actionEvent) {

@@ -8,9 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * There is description
@@ -138,21 +136,20 @@ public class PersonInfo {
             return;
         }
         boolean resetSeatNo = random != null && random > 0;
-        if (!resetSeatNo) {
-            for (PersonInfo personInfo : list) {
-                if (StringUtils.isBlank(personInfo.getSeatNo())) {
-                    resetSeatNo = true;
-                    break;
-                }
-            }
+        if (resetSeatNo) {
+            Collections.shuffle(list, new Random(random));
         }
 
         String format = list.size() >= 100 ? "%03d" : "%02d";
-        for (int i = 0; i < list.size(); i++) {
-            PersonInfo personInfo = list.get(i);
-            personInfo.setSeatNo(resetSeatNo ? String.format(format, (i + 1)) : personInfo.getSeatNo());
+        int index = 0;
+        for (PersonInfo personInfo : list) {
+            boolean reset = resetSeatNo || StringUtils.isBlank(personInfo.getSeatNo());
+            personInfo.setSeatNo(reset ? String.format(format, (index + 1)) : personInfo.getSeatNo());
             personInfo.setRoomNo(roomNo);
             personInfo.setTime(time);
+            if (reset) {
+                index++;
+            }
         }
     }
 

@@ -71,29 +71,38 @@ class ExamRoomInfo {
         this.time = props.time;
         this.maxCount = props.maxCount == null ? 30 : props.maxCount;
 
-        let tmpList = props.list;
+        // let tmpList = props.list;
         this.list = [[new PersonInfo()]];
         this.list = [];
-        if (tmpList != null && tmpList.length >= 0) {
-            for (let i = 0; i < tmpList.length; i++) {
-                let p = [];
-                let perList = tmpList[i];
-                if (perList != null && perList.length >= 0) {
-                    for (let j = 0; j < perList.length; j++) {
-                        p.push(new PersonInfo(perList[j]));
-                    }
-                }
+        // if (tmpList != null && tmpList.length >= 0) {
+        //     for (let i = 0; i < tmpList.length; i++) {
+        //         let p = [];
+        //         let perList = tmpList[i];
+        //         if (perList != null && perList.length >= 0) {
+        //             for (let j = 0; j < perList.length; j++) {
+        //                 p.push(new PersonInfo(perList[j]));
+        //             }
+        //         }
+        //
+        //         this.list.push(p);
+        //     }
+        // }
 
-                this.list.push(p);
+        let tmpPersonList = props.persons;
+        this.persons = [new PersonInfo()];
+        this.persons = [];
+        if (tmpPersonList != null && tmpPersonList.length >= 0) {
+            for (let i = 0; i < tmpPersonList.length; i++) {
+                this.persons.push(new PersonInfo(tmpPersonList[i]));
             }
         }
 
-        let roomNoTmpList = props.roomNoList;
-        this.roomNoList = [""];
-        this.roomNoList = [];
-        if (roomNoTmpList != null && roomNoTmpList.length >= 0) {
-            for (let i = 0; i < roomNoTmpList.length; i++) {
-                this.roomNoList.push(roomNoTmpList[i]);
+        let roomTmpList = props.roomList;
+        this.roomList = [new ExamRoomInfo()];
+        this.roomList = [];
+        if (roomTmpList != null && roomTmpList.length >= 0) {
+            for (let i = 0; i < roomTmpList.length; i++) {
+                this.roomList.push(new ExamRoomInfo(roomTmpList[i]));
             }
         }
     }

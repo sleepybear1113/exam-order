@@ -54,65 +54,6 @@
     <div class="no-print">
         <h1>嘉兴市职业技能操作考试试场编排系统</h1>
         <div style="display: flex">
-            <div id="table" style="float: left; border-right: black 1px solid;">
-                <h3>
-                    数量时间信息临时设置
-                </h3>
-                <button v-on:click="change()">保存下述内容</button>
-
-                <table>
-                    <thead>
-                    <tr>
-                        <td>
-                            考点代码
-                        </td>
-                        <td>
-                            科目类别
-                        </td>
-                        <td>
-                            科目类别名
-                        </td>
-                        <td>
-                            试场容纳人数
-                        </td>
-                        <td>
-                            试场数量
-                        </td>
-                        <td>
-                            考试时间
-                        </td>
-                    </tr>
-                    </thead>
-                    <template v-for="examRoomInfo in examRoomInfoList">
-                        <tr>
-                            <td>
-                                {{examRoomInfo.examPlaceId == null ? "无" : examRoomInfo.examPlaceId}}
-                            </td>
-                            <td>
-                                {{examRoomInfo.subjectType}}
-                            </td>
-                            <td>
-                                {{examRoomInfo.subjectName}}
-                            </td>
-                            <td>
-                                <label>
-                                    <input v-model="examRoomInfo.maxCount" type="number" class="number-input">
-                                </label>
-                            </td>
-                            <td>
-                                <label>
-                                    <input v-model="examRoomInfo.roomCount" type="number" class="number-input">
-                                </label>
-                            </td>
-                            <td>
-                                <label>
-                                    <input v-model="examRoomInfo.time" style="width: 230px">
-                                </label>
-                            </td>
-                        </tr>
-                    </template>
-                </table>
-            </div>
 
             <div style="float: left; margin-left: 5px; border-right: black solid 1px">
                 <h3>
@@ -166,8 +107,6 @@
                     <hr>
                     <div>
                         <h4>准考证生成</h4>
-
-                        <p>左侧可以输入每个类别的时间，不输入将不显示</p>
                         <button v-on:click="changeTab('准考证列表')">准考证生成</button>
                     </div>
 
@@ -196,20 +135,6 @@
                 <hr>
 
                 <p>
-                    “数量信息”设置栏，可以设置每种类别的每个市场的最大考生数量。类别将会从导入的Excel中的“科目类别”列自动提取。默认最大数量为
-                    30。也可以根据类别来自定义设置。
-                </p>
-                <p>
-                    这个数量信息将会保存在程序的文件夹下，名为“自定义配置.json”的文件。若Excel信息录入错误，导致提取类别名称不符合预期，可以删除“自定义配置.json”文件然后重启程序。
-                </p>
-                <hr>
-
-                <p>
-                    这个数量信息将会保存在程序的文件夹下，名为“自定义配置.json”的文件。若Excel信息录入错误，导致提取类别名称不符合预期，可以删除“自定义配置.json”文件然后重启程序。
-                </p>
-                <hr>
-
-                <p>
                     “核对单功能”中，“顺序生成”会主要按照Excel的顺序进行一次生成，不改变同一个类别内的顺序。随机生成则会随机打乱同一个考点下同一个类别内的考生次序。
                 </p>
                 <p>
@@ -219,8 +144,7 @@
                 <hr>
 
                 <p>
-                    “准考证生成”需要先生成核对单，会根据核对单来生成准考证。一页 8 张。“考试时间”可选填写，否则将不显示(如填写“2022年1月1日
-                    9:00-11:30”)。
+                    “准考证生成”需要先生成核对单，会根据核对单来生成准考证。一页 8 张。
                 </p>
                 <hr>
 
@@ -232,7 +156,68 @@
         </div>
         <hr>
 
+        <div v-if="false" id="table" style="border-right: black 1px solid;">
+            <h3>
+                数量时间信息临时设置
+            </h3>
+            <button v-on:click="change()">保存下述内容</button>
+
+            <table>
+                <thead>
+                <tr>
+                    <td>
+                        考点代码
+                    </td>
+                    <td>
+                        科目类别
+                    </td>
+                    <td>
+                        科目类别名
+                    </td>
+                    <td>
+                        试场容纳人数
+                    </td>
+                    <td>
+                        试场数量
+                    </td>
+                    <td>
+                        考试时间
+                    </td>
+                </tr>
+                </thead>
+                <template v-for="examRoomInfo in examRoomInfoList">
+                    <tr>
+                        <td>
+                            {{examRoomInfo.examPlaceId == null ? "无" : examRoomInfo.examPlaceId}}
+                        </td>
+                        <td>
+                            {{examRoomInfo.subjectType}}
+                        </td>
+                        <td>
+                            {{examRoomInfo.subjectName}}
+                        </td>
+                        <td>
+                            <label>
+                                <input v-model="examRoomInfo.maxCount" type="number" class="number-input">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input v-model="examRoomInfo.roomCount" type="number" class="number-input">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input v-model="examRoomInfo.time" style="width: 230px">
+                            </label>
+                        </td>
+                    </tr>
+                </template>
+            </table>
+        </div>
+        <hr>
         <div>
+
             <hr>
         </div>
         <h2>{{tab}}</h2>
@@ -251,7 +236,7 @@
                 <template v-for="examRoomInfo in examPlaceInfo.list">
 
                     <!--科目下的单个试场-->
-                    <template v-for="(personInfoList, index) in examRoomInfo.list">
+                    <template v-for="(room, index) in examRoomInfo.roomList">
                         <table>
                             <caption>
                                 <div style="margin-bottom: 8px;">
@@ -264,17 +249,17 @@
                                             {{examRoomInfo.subjectName}}({{examRoomInfo.subjectType}})
                                         </span>
                                     <span class="check-caption" style="float: right">
-                                            试场：{{examRoomInfo.roomNoList[index]}}
+                                            试场：{{room.roomName}}
                                         </span>
                                 </div>
                             </caption>
 
                             <!--单个考点下若干行-->
-                            <template v-for="row in Math.ceil(personInfoList.length / colCount)">
+                            <template v-for="row in Math.ceil(room.persons.length / colCount)">
                                 <tr>
                                     <!--每行具体内容-->
                                     <template
-                                            v-for="(person, col) in personInfoList.slice((row - 1) * colCount, row * colCount)">
+                                            v-for="(person, col) in room.persons.slice((row - 1) * colCount, row * colCount)">
                                         <td>
                                             <img :src="picHost + person.picSrc" alt="" :width="imgWidth + 'px'"
                                                  :height="imgHeight + 'px'"
@@ -286,8 +271,8 @@
                                     </template>
 
                                     <!--最后一行补充空白-->
-                                    <template v-if="(row * colCount) > personInfoList.length">
-                                        <template v-for="row in (colCount - personInfoList.length % colCount)">
+                                    <template v-if="(row * colCount) > room.persons.length">
+                                        <template v-for="row in (colCount - room.persons.length % colCount)">
                                             <!--空白行-->
                                             <td>
                                                 <img :src="emptyPng" alt=" " :width="imgWidth + 'px'"
@@ -317,12 +302,14 @@
                 <template v-for="examRoomInfo in examPlaceInfo.list">
                     <!--所有试场取出单个科目的试场合集-->
 
-                    <template v-for="(oneRoomPersons, index) in examRoomInfo.list">
-                        <template v-for="row in Math.ceil(oneRoomPersons.length / ticketColCount)">
+                    <template v-for="(room, index) in examRoomInfo.roomList">
+                        <!--单个科目，遍历下属的每个试场-->
+
+                        <template v-for="row in Math.ceil(room.persons.length / ticketColCount)">
                             <table>
                                 <tr>
                                     <template
-                                            v-for="(person, col) in oneRoomPersons.slice((row - 1) * ticketColCount, row * ticketColCount)">
+                                            v-for="(person, col) in room.persons.slice((row - 1) * ticketColCount, row * ticketColCount)">
                                         <td>
                                             <div>
                                                 <h2 style="text-align: center">{{ticketTitle}}</h2>
@@ -363,7 +350,8 @@
                                 </tr>
                             </table>
 
-                            <template v-if="row % 4 === 0 && (row < Math.ceil(oneRoomPersons.length / ticketColCount) || index < examRoomInfo.list.length - 1)">
+                            <template v-if="row % 4 === 0 && (row < Math.ceil(room.persons.length / ticketColCount) || index < examRoomInfo.roomList.length - 1)">
+                                <!--每隔 4 行一次分页，但是除 这个试场的 row 是最后一行，或者 这个科目是最后一个 之外-->
                                 <div class="no-print">
                                     <hr>
                                 </div>
@@ -372,7 +360,7 @@
                         </template>
 
 
-                        <template v-if="(Math.ceil(oneRoomPersons.length / ticketColCount) % 4 !== 0) && index < examRoomInfo.list.length - 1">
+                        <template v-if="(Math.ceil(room.persons.length / ticketColCount) % 4 !== 0) && index < examRoomInfo.roomList.length - 1">
                             <div class="no-print">
                                 <hr>
                             </div>
@@ -380,7 +368,7 @@
                         </template>
                     </template>
 
-                    <template v-if="examRoomInfo.list != null && examRoomInfo.list.length > 0">
+                    <template v-if="examRoomInfo.roomList != null && examRoomInfo.roomList.length > 0">
                         <div class="no-print">
                             <hr>
                         </div>

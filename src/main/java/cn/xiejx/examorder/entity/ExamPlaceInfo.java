@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class ExamPlaceInfo {
         }
 
         List<ExamPlaceInfo> examPlaceInfoList = new ArrayList<>();
-        final int[] roomIndex = {0};
+        final int[] roomIndex = {1};
         personInfoExamPlaceNameMap.forEach((examPlaceId, personInfos) -> {
             // 遍历考点学校
             Map<String, List<PersonInfo>> subjectPersonInfoMap = new HashMap<>();
@@ -72,6 +73,7 @@ public class ExamPlaceInfo {
                     if (examRoomInfo.getExamPlaceId() == null && examPlaceId != null) {
                         examRoomInfo.setExamPlaceId(examPlaceId);
                     }
+                    examRoomInfo.buildDetail();
                 }
                 List<PersonInfo> personList = subjectPersonInfoMap.get(subject);
                 roomIndex[0] = ExamRoomInfo.buildExamRoom(examRoomInfos, personList, roomIndex[0], random);
@@ -81,7 +83,37 @@ public class ExamPlaceInfo {
             }
         });
 
-        return examPlaceInfoList;
+        List<ExamPlaceInfo> res = new ArrayList<>();
+        for (ExamPlaceInfo examPlaceInfo : examPlaceInfoList) {
+            ExamPlaceInfo copy = new ExamPlaceInfo();
+            BeanUtils.copyProperties(examPlaceInfo, copy);
+            res.add(copy);
+        }
+
+
+        for (ExamPlaceInfo examPlaceInfo : res) {
+            // 遍历多个考点
+
+            List<ExamRoomInfo> list = new ArrayList<>();
+            for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
+                // 遍历考点下的多个科目试场
+                List<ExamRoomInfo> personRoomList = new ArrayList<>();
+                for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
+                    if (CollectionUtils.isNotEmpty(roomInfo.getPersons())) {
+                        personRoomList.add(roomInfo);
+                    }
+                }
+                if (CollectionUtils.isNotEmpty(personRoomList)) {
+                    examRoomInfo.setRoomList(personRoomList);
+                    list.add(examRoomInfo);
+                }
+            }
+            examPlaceInfo.setList(list);
+            examPlaceInfo.getList().removeIf(examRoomInfo -> CollectionUtils.isEmpty(examRoomInfo.getRoomList()));
+        }
+
+        res.removeIf(examPlaceInfo -> CollectionUtils.isEmpty(examPlaceInfo.getList()));
+        return res;
     }
 
 }
