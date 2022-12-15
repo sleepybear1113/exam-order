@@ -108,7 +108,7 @@ public class IndexController {
         }
         for (ExamPlaceInfo examPlaceInfo : list) {
             for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
-                if (CollectionUtils.isEmpty(examRoomInfo.getList())) {
+                if (CollectionUtils.isEmpty(examRoomInfo.getRoomNoList())) {
                     continue;
                 }
                 for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
