@@ -89,7 +89,7 @@ public class IndexFxml {
                     Desktop.getDesktop().browse(uri);
                 } else {
                     boolean success = false;
-                    String[] cmdList = {"xdg-open ", "sensible-browser ", "x-www-browser ", "gnome-open ", "chrome "};
+                    String[] cmdList = {"xdg-open ", "sensible-browser ", "x-www-browser ", "gnome-open "};
                     for (String cmd : cmdList) {
                         try {
                             Process proc = Runtime.getRuntime().exec(cmd + " " + url);
