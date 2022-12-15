@@ -29,7 +29,7 @@ let app = new Vue({
         this.examPlaceInfoList = [];
         this.imgHeight = this.imgWidth * 1.4;
         document.documentElement.style.fontSize = this.infoFontSize + "px";
-        this.picHost = window.location.origin + "/";
+        this.picHost = window.location.origin;
 
         this.getSubjectInfoMaxCountList();
     },
