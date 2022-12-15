@@ -16,21 +16,15 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
-import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -84,26 +78,21 @@ public class IndexFxml {
             } else if (osName.startsWith("Windows")) {
                 Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                    URI uri = new URI(url);
-                    Desktop.getDesktop().browse(uri);
-                } else {
-                    boolean success = false;
-                    String[] cmdList = {"xdg-open ", "sensible-browser ", "x-www-browser ", "gnome-open "};
-                    for (String cmd : cmdList) {
-                        try {
-                            Process proc = Runtime.getRuntime().exec(cmd + " " + url);
-                        } catch (IOException ignored) {
-                            continue;
-                        }
-                        success = true;
-                        break;
+                boolean success = false;
+                String[] cmdList = {"xdg-open", "sensible-browser", "x-www-browser", "gnome-open"};
+                for (String cmd : cmdList) {
+                    try {
+                        Process proc = Runtime.getRuntime().exec(cmd + " " + url);
+                    } catch (IOException ignored) {
+                        continue;
                     }
-                    if (!success) {
-                        addInfo("打开浏览器失败！");
-                        addInfo("请手动打开浏览器，并且输入以下网址：");
-                        addInfo(url.replace("http://", ""));
-                    }
+                    success = true;
+                    break;
+                }
+                if (!success) {
+                    addInfo("打开浏览器失败！");
+                    addInfo("请手动打开浏览器，并且输入以下网址：");
+                    addInfo(url.replace("http://", ""));
                 }
             }
         } catch (Exception e) {
