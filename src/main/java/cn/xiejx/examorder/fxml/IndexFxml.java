@@ -67,6 +67,10 @@ public class IndexFxml {
             return;
         }
 
+        new Thread(this::openBrowser1).start();
+    }
+
+    public void openBrowser1() {
         addInfo("打开浏览器...");
         Environment environment = SpringContextUtil.getBean(Environment.class);
         String port = environment.getProperty("server.port");
