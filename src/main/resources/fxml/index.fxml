@@ -15,14 +15,14 @@
          <Font size="18.0" />
       </font></Label>
 
-    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#choosePicDir" prefHeight="23.0" prefWidth="141.0" text="选择考生照片文件夹" />
-    <Label fx:id="picPathLabel" layoutX="185.0" layoutY="93.0" />
-
     <Button layoutX="29.0" layoutY="51.0" mnemonicParsing="false" onAction="#chooseDataPath" prefHeight="23.0" prefWidth="142.0" text="选择考生信息Excel" />
     <Label fx:id="dataPathLabel" layoutX="185.0" layoutY="55.0" />
 
-    <Button layoutX="29.0" layoutY="129.0" mnemonicParsing="false" onAction="#chooseRoomPath" prefHeight="23.0" prefWidth="142.0" text="选择试场场次规格Excel" />
-    <Label fx:id="roomPathLabel" layoutX="185.0" layoutY="133.0" />
+    <Button layoutX="29.0" layoutY="89.0" mnemonicParsing="false" onAction="#chooseRoomPath" prefHeight="23.0" prefWidth="141.0" text="选择试场场次规格Excel" />
+    <Label fx:id="roomPathLabel" layoutX="185.0" layoutY="93.0" />
+
+    <Button layoutX="29.0" layoutY="129.0" mnemonicParsing="false" onAction="#choosePicDir" prefHeight="23.0" prefWidth="142.0" text="选择考生照片文件夹" />
+    <Label fx:id="picPathLabel" layoutX="185.0" layoutY="133.0" />
 
     <ListView fx:id="infoListView" layoutX="29.0" layoutY="163.0" prefHeight="100.0" prefWidth="411.0" />
 

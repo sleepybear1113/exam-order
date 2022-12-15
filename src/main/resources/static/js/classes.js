@@ -4,7 +4,7 @@ class PersonInfo {
             return;
         }
 
-        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "" : window.location.origin + props.picSrc;
+        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "" : props.picSrc;
         this.id = props.id;
         this.name = props.name;
         this.sex = props.sex;
@@ -71,22 +71,8 @@ class ExamRoomInfo {
         this.time = props.time;
         this.maxCount = props.maxCount == null ? 30 : props.maxCount;
 
-        // let tmpList = props.list;
         this.list = [[new PersonInfo()]];
         this.list = [];
-        // if (tmpList != null && tmpList.length >= 0) {
-        //     for (let i = 0; i < tmpList.length; i++) {
-        //         let p = [];
-        //         let perList = tmpList[i];
-        //         if (perList != null && perList.length >= 0) {
-        //             for (let j = 0; j < perList.length; j++) {
-        //                 p.push(new PersonInfo(perList[j]));
-        //             }
-        //         }
-        //
-        //         this.list.push(p);
-        //     }
-        // }
 
         let tmpPersonList = props.persons;
         this.persons = [new PersonInfo()];

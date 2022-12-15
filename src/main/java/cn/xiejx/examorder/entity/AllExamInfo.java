@@ -36,9 +36,9 @@ public class AllExamInfo {
         for (ExamPlaceInfo examPlaceInfo : list) {
             List<ExamRoomInfo> examRoomInfos = examPlaceInfo.getList();
             for (ExamRoomInfo examRoomInfo : examRoomInfos) {
-                for (List<PersonInfo> personInfoList : examRoomInfo.getList()) {
-                    for (PersonInfo personInfo : personInfoList) {
-                        personInfo.buildPicSrc(fileNameMap);
+                for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
+                    for (PersonInfo person : roomInfo.getPersons()) {
+                        person.buildPicSrc(fileNameMap);
                     }
                 }
             }

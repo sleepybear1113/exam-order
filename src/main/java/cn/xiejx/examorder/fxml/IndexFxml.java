@@ -15,6 +15,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -61,6 +62,11 @@ public class IndexFxml {
     public void openBrowser(ActionEvent actionEvent) throws Exception {
         if (CollectionUtils.isEmpty(personInfoList)) {
             addInfo("没有有效的考生数据！请重新选择Excel文件！");
+            return;
+        }
+
+        if (MapUtils.isEmpty(placeSubjectRoomInfoMap)) {
+            addInfo("没有有效的考场场次数据！请重新选择Excel文件！");
             return;
         }
 
