@@ -111,8 +111,8 @@ public class IndexController {
                 if (CollectionUtils.isEmpty(examRoomInfo.getList())) {
                     continue;
                 }
-                for (List<PersonInfo> personInfos : examRoomInfo.getList()) {
-                    data.addAll(personInfos);
+                for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
+                    data.addAll(roomInfo.getPersons());
                 }
             }
         }
