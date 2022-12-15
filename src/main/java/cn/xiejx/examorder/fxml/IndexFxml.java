@@ -16,14 +16,17 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -74,8 +77,8 @@ public class IndexFxml {
         Environment environment = SpringContextUtil.getBean(Environment.class);
         String port = environment.getProperty("server.port");
         String url = "http://127.0.0.1:%s".formatted(port);
+        String osName = System.getProperty("os.name", "");
         try {
-            String osName = System.getProperty("os.name", "");
             if (osName.startsWith("Mac OS")) {
                 Class.forName("com.apple.eio.FileManager").getDeclaredMethod("openURL", String.class).invoke(null, url);
             } else if (osName.startsWith("Windows")) {
@@ -85,16 +88,18 @@ public class IndexFxml {
                     URI uri = new URI(url);
                     Desktop.getDesktop().browse(uri);
                 } else {
-                    Runtime rt = Runtime.getRuntime();
-                    StringBuilder cmd = new StringBuilder();
-                    String[] browsers = {"google-chrome", "firefox", "mozilla", "epiphany", "konqueror",
-                            "netscape", "opera", "links", "lynx"};
-                    for (String browser : browsers) {
-                        cmd.append(String.format("%s \"%s\" || ", browser, url));
+                    boolean success = false;
+                    String[] cmdList = {"xdg-open ", "sensible-browser ", "x-www-browser ", "gnome-open ", "chrome "};
+                    for (String cmd : cmdList) {
+                        try {
+                            Process proc = Runtime.getRuntime().exec(cmd + " " + url);
+                        } catch (IOException ignored) {
+                            continue;
+                        }
+                        success = true;
+                        break;
                     }
-                    if (cmd.length() > 0) {
-                        rt.exec(new String[]{"sh", "-c", cmd.substring(0, cmd.length() - 3)});
-                    } else {
+                    if (!success) {
                         addInfo("打开浏览器失败！");
                         addInfo("请手动打开浏览器，并且输入以下网址：");
                         addInfo(url.replace("http://", ""));

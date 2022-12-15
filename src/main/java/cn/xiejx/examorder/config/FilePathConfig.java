@@ -17,5 +17,6 @@ public class FilePathConfig implements WebMvcConfigurer {
         for (char c = 'A'; c <= 'Z'; c++) {
             registry.addResourceHandler(c + ":/**").addResourceLocations("file:" + c + ":/");
         }
+        registry.addResourceHandler("/home/**").addResourceLocations("file:/home" + "/");
     }
 }
