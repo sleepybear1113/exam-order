@@ -15,7 +15,7 @@ public class FxmlApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 500, 305);
+        Scene scene = new Scene(fxmlLoader.load(), 500, 330);
         stage.setTitle("试场编排系统");
         stage.setScene(scene);
         stage.show();

@@ -88,7 +88,11 @@
                         <button v-on:click="processPic(Math.ceil(Math.random() * 10000000000))">随机生成</button>
                         <button v-on:click="advanceChange()">高级设置</button>
                         <br/>
+                        <p>
+                            <button v-on:click="exportExcel()">导出Excel</button>
+                        </p>
                         <div v-show="advance">
+                            <hr>
                             <p>
                                 <button v-on:click="processPic(random)">使用右侧随机数生成</button>
                                 <label>
@@ -98,10 +102,10 @@
                             <p>
                                 <label>两次的随机数若一致，那么生成的顺序也是一致的。</label>
                             </p>
+                            <button v-on:click="changeSubjectInfo()">显示/隐藏科目设置</button>
+                            <hr>
                         </div>
-                        <p>
-                            <button v-on:click="exportExcel()">导出Excel</button>
-                        </p>
+
                     </div>
 
                     <hr>
@@ -156,7 +160,7 @@
         </div>
         <hr>
 
-        <div v-if="false" id="table" style="border-right: black 1px solid;">
+        <div v-if="showSubjectInfo" id="table" style="border-right: black 1px solid;">
             <h3>
                 数量时间信息临时设置
             </h3>
@@ -381,6 +385,6 @@
     </div>
 </div>
 
-<script src="js/index.js"></script>
+<script src="js/index.js?version=1.3"></script>
 </body>
 </html>

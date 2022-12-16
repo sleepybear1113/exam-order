@@ -24,6 +24,7 @@ let app = new Vue({
         ticketRow: 0,
         ticketTitle: "浙江省高校招生职业技能操作考试",
         examRoomInfoList: [],
+        showSubjectInfo: false,
     },
     created() {
         this.examPlaceInfoList = [];
@@ -97,6 +98,9 @@ let app = new Vue({
         },
         log: function (data) {
             console.log(data);
+        },
+        changeSubjectInfo: function () {
+            this.showSubjectInfo = !this.showSubjectInfo;
         },
     },
 

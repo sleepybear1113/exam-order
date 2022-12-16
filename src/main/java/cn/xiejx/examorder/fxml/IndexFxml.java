@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.DirectoryChooser;
@@ -42,6 +43,9 @@ public class IndexFxml {
     public Label dataPathLabel;
     public ListView<String> infoListView;
     public Label roomPathLabel;
+    public Button download1;
+
+    public Button download2;
     private String dataPath;
     private String roomPath;
 
@@ -56,7 +60,7 @@ public class IndexFxml {
         addInfo("程序已启动！");
     }
 
-    public void openBrowser(ActionEvent actionEvent) throws Exception {
+    public void openBrowser(ActionEvent actionEvent) {
         if (CollectionUtils.isEmpty(personInfoList)) {
             addInfo("没有有效的考生数据！请重新选择Excel文件！");
             return;
@@ -74,7 +78,8 @@ public class IndexFxml {
         addInfo("打开浏览器...");
         Environment environment = SpringContextUtil.getBean(Environment.class);
         String port = environment.getProperty("server.port");
-        String url = "http://127.0.0.1:%s".formatted(port);
+        String urlRaw = "http://127.0.0.1:%s".formatted(port);
+        String url = urlRaw + "?version=1.3";
         String osName = System.getProperty("os.name", "");
         try {
             if (osName.startsWith("Mac OS")) {
@@ -96,13 +101,13 @@ public class IndexFxml {
                 if (!success) {
                     addInfo("打开浏览器失败！");
                     addInfo("请手动打开浏览器，并且输入以下网址：");
-                    addInfo(url.replace("http://", ""));
+                    addInfo(urlRaw.replace("http://", ""));
                 }
             }
         } catch (Exception e) {
             addInfo("打开浏览器失败！");
             addInfo("请手动打开浏览器，并且输入以下网址：");
-            addInfo(url.replace("http://", ""));
+            addInfo(urlRaw.replace("http://", ""));
         }
     }
 
@@ -261,11 +266,12 @@ public class IndexFxml {
         alert.setTitle("使用说明");
         alert.setContentText("""
                 使用步骤：
-                1. 点击“选择考生信息数据文件”按钮，选择带 姓名、考生号、类别代码 等信息的Excel文件。选择完成后会在信息框中看到相关提示。
-                2. 点击“选择考生照片文件夹”按钮。里面需要包含考生照片，以 考生号 或者 身份证号 为文件名，后缀为 jpg 或 png。会自动通过考生号或身份证号关联。
-                3. 选择完毕后，点击“打开浏览器”按钮，进行一些布局的相关设置。
-                4. 打开浏览器后，请不要关闭本程序。本程序将会后台运行，在浏览器页面上输出编排表，以及导出Excel相关功能。
-                5. 请勿使用 IE 浏览器，可以使用 Edge、Chrome、Firefox、360、2345 等主流浏览器。若“打开浏览器”按钮无法打开浏览器，请自行打开浏览器，输入 127.0.0.1:13322 回车访问即可。
+                1. 点击“选择考生信息Excel”按钮，选择带 姓名、考生号、类别代码 等信息的Excel文件。选择完成后会在信息框中看到相关提示。
+                2. 点击“试场场次规格Excel”按钮，选择带 学校、类别代码 等信息的Excel文件。选择完成后会在信息框中看到相关提示。
+                3. 点击“选择考生照片文件夹”按钮。里面需要包含考生照片，以 考生号 或者 身份证号 为文件名，后缀为 jpg 或 png。会自动通过考生号或身份证号关联。
+                4. 选择完毕后，点击“打开浏览器”按钮，进行一些布局的相关设置。
+                5. 打开浏览器后，请不要关闭本程序。本程序将会后台运行，在浏览器页面上输出编排表，以及导出Excel相关功能。
+                6. 请勿使用 IE 浏览器，可以使用 Edge、Chrome、Firefox、360、2345 等主流浏览器。若“打开浏览器”按钮无法打开浏览器，请自行打开浏览器，输入 127.0.0.1:13322 回车访问即可。
                 """);
         alert.setHeaderText("""
                 考试编排系统使用说明
@@ -273,8 +279,17 @@ public class IndexFxml {
         alert.showAndWait();
     }
 
-    public void downloadExcelTemplate(ActionEvent actionEvent) {
+    public void downloadExcelTemplate1(ActionEvent actionEvent) {
         String templateName = "考生信息Excel模板.xlsx";
+        downloadTemplate(templateName);
+    }
+
+    public void downloadExcelTemplate2(ActionEvent actionEvent) {
+        String templateName = "试场场次Excel模板.xlsx";
+        downloadTemplate(templateName);
+    }
+
+    private void downloadTemplate(String templateName) {
         try {
             //获取inu模板文件
             Resource resource = new ClassPathResource(templateName);

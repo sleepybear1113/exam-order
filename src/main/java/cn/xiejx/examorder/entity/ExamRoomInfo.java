@@ -172,9 +172,11 @@ public class ExamRoomInfo {
         // 是否重置座位号等
         boolean reset = random != null && random > 0;
         if (reset) {
+            // 打乱顺序
             Collections.shuffle(personInfoList, new Random(random));
         }
 
+        // 试场 map，若指定了试场名，那么放入 map
         Map<String, List<PersonInfo>> roomPersonMap = new HashMap<>();
         for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
             if (StringUtils.isBlank(examRoomInfo.getRoomName())) {
@@ -182,6 +184,8 @@ public class ExamRoomInfo {
             }
             roomPersonMap.put(examRoomInfo.getRoomName(), new ArrayList<>());
         }
+
+        // 学生信息有试场号的放入上面 map，并且移除
         personInfoList.removeIf(personInfo -> {
             String roomNo = personInfo.getRoomNo();
             if (StringUtils.isBlank(roomNo)) {
@@ -195,8 +199,10 @@ public class ExamRoomInfo {
             return true;
         });
 
+        // 遍历所有科目的试场
         int startIndex = 0;
         for (ExamRoomInfo examRoomInfo : examRoomInfoList) {
+            // 遍历该科目前所有试场
             for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
                 String name = roomInfo.getRoomName();
                 Integer maxCount = roomInfo.getMaxCount();
@@ -212,6 +218,7 @@ public class ExamRoomInfo {
                 continue;
             }
 
+            // 把学生放入试场
             for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
                 if (startIndex >= personInfoList.size()) {
                     break;
@@ -224,6 +231,7 @@ public class ExamRoomInfo {
                 List<PersonInfo> subList = new ArrayList<>(personInfoList.subList(startIndex, Math.min(personInfoList.size(), startIndex + leftCount)));
                 roomInfo.getPersons().addAll(subList);
                 String roomNo = StringUtils.isBlank(roomInfo.getRoomName()) ? "%03d".formatted(roomIndex++) : roomInfo.getRoomName();
+                // 构建座位号
                 PersonInfo.buildSeatNo(roomInfo.getPersons(), roomNo, random, examRoomInfo.getTime());
                 roomInfo.getPersons().forEach(personInfo -> personInfo.setExamPlaceName(examRoomInfo.getExamPlaceName()));
                 roomInfo.setRoomName(roomNo);
