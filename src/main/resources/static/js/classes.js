@@ -4,7 +4,7 @@ class PersonInfo {
             return;
         }
 
-        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "" : (props.picSrc.startsWith("/") ? props.picSrc : "/" + props.picSrc);
+        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "/empty-photo.png" : (props.picSrc.startsWith("/") ? props.picSrc : "/" + props.picSrc);
         this.id = props.id;
         this.name = props.name;
         this.sex = props.sex;
@@ -26,32 +26,8 @@ class AllExamInfo {
             return;
         }
 
-        let tmpList = props.list;
-        this.list = [];
-        if (tmpList != null && tmpList.length >= 0) {
-            for (let i = 0; i < tmpList.length; i++) {
-                this.list.push(new ExamPlaceInfo(tmpList[i]));
-            }
-        }
-    }
-}
-
-class ExamPlaceInfo {
-    constructor(props) {
-        if (props == null) {
-            return;
-        }
-
-        this.examPlaceName = props.examPlaceName;
-        this.examPlaceId = props.examPlaceId;
-        let tmpList = props.list;
-        this.list = [new ExamRoomInfo()];
-        this.list = [];
-        if (tmpList != null && tmpList.length >= 0) {
-            for (let i = 0; i < tmpList.length; i++) {
-                this.list.push(new ExamRoomInfo(tmpList[i]));
-            }
-        }
+        this.rooms = props.rooms.map(item => new Room(item));
+        this.persons = props.persons.map(item => new PersonInfo(item));
     }
 }
 
@@ -91,5 +67,26 @@ class ExamRoomInfo {
                 this.roomList.push(new ExamRoomInfo(roomTmpList[i]));
             }
         }
+    }
+}
+
+class Room {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.id = props.id;
+        this.examPlaceId = props.examPlaceId;
+        this.examPlaceName = props.examPlaceName;
+        this.subjectType = props.subjectType;
+        this.subjectName = props.subjectName;
+        this.maxCountStr = props.maxCountStr;
+        this.maxCount = props.maxCount;
+        this.roomCountStr = props.roomCountStr;
+        this.roomCount = props.roomCount;
+        this.roomName = props.roomName;
+        this.time = props.time;
+        this.persons = props.persons.map(item => new PersonInfo(item));
     }
 }

@@ -1,5 +1,6 @@
 package cn.xiejx.examorder.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,12 @@ import java.util.*;
  */
 @Data
 public class AllExamInfo {
+    @JsonIgnore
     private List<ExamPlaceInfo> list;
+
+    private List<Room> rooms;
+
+    private List<PersonInfo> persons;
 
     public void processPicSrc(String picSrcPrefix) {
         if (StringUtils.isBlank(picSrcPrefix) || CollectionUtils.isEmpty(list)) {
@@ -28,7 +34,7 @@ public class AllExamInfo {
             return;
         }
 
-        Map<String,File> fileNameMap = new HashMap<>();
+        Map<String, File> fileNameMap = new HashMap<>();
         for (File file : files) {
             fileNameMap.put(file.getName().split("\\.")[0], file);
         }

@@ -1,9 +1,6 @@
 package cn.xiejx.examorder.controller;
 
-import cn.xiejx.examorder.entity.AllExamInfo;
-import cn.xiejx.examorder.entity.ExamPlaceInfo;
-import cn.xiejx.examorder.entity.ExamRoomInfo;
-import cn.xiejx.examorder.entity.PersonInfo;
+import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.fxml.IndexFxml;
 import com.alibaba.excel.EasyExcel;
 import javafx.application.Platform;
@@ -47,6 +44,9 @@ public class IndexController {
 
         AllExamInfo res = new AllExamInfo();
         res.setList(allExamInfo.getList());
+//        res.setList(res.getList().subList(0,2));
+        res.setRooms(Room.build(res.getList()));
+        res.setPersons(Room.getSortedPersons(res.getRooms()));
         return res;
     }
 

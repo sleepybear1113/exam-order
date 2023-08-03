@@ -6,10 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * There is description
@@ -113,6 +110,7 @@ public class ExamPlaceInfo {
         }
 
         res.removeIf(examPlaceInfo -> CollectionUtils.isEmpty(examPlaceInfo.getList()));
+        res.sort(Comparator.comparingInt(o -> o.getList().get(0).getId()));
         return res;
     }
 

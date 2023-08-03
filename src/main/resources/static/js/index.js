@@ -1,12 +1,12 @@
 let app = new Vue({
     el: '#app',
     data: {
+        allExamInfo: {},
         imgWidth: 120,
         imgHeight: null,
         personTableList: [],
         colCount: 6,
         infoFontSize: 16,
-        examPlaceInfoList: [new ExamPlaceInfo()],
         colCountTmp: 0,
         picHost: "",
         subjectInfoMaxCountList: [],
@@ -25,9 +25,14 @@ let app = new Vue({
         ticketTitle: "浙江省高校招生职业技能操作考试",
         examRoomInfoList: [],
         showSubjectInfo: false,
+        showTicketSinglePic: true,
+        ticketSingleTd: {
+            border: "1px solid black",
+            padding: "8px",
+            "min-width": "250px"
+        }
     },
     created() {
-        this.examPlaceInfoList = [];
         this.imgHeight = this.imgWidth * 1.4;
         document.documentElement.style.fontSize = this.infoFontSize + "px";
         this.picHost = window.location.origin;
@@ -35,27 +40,27 @@ let app = new Vue({
         this.getSubjectInfoMaxCountList();
     },
     methods: {
-        change: function () {
+        change() {
             let url = "updateMaxCount";
             axios.post(url, this.examRoomInfoList).then((res) => {
                 console.log(res.data);
             });
         },
-        adjustImgSize: function () {
+        adjustImgSize() {
             this.imgHeight = this.imgWidth * 1.4;
         },
-        advanceChange: function () {
+        advanceChange() {
             this.advance = !this.advance;
             this.ticketRow = 0;
         },
-        changeInfoFontSize: function (x) {
+        changeInfoFontSize(x) {
             this.infoFontSize += x;
             document.documentElement.style.fontSize = this.infoFontSize + "px";
         },
-        changeTab: function (tab) {
+        changeTab(tab) {
             this.tab = tab;
         },
-        processPic: function (random) {
+        processPic(random) {
             this.random = random;
             let url = "processPersonByGroup";
             axios.get(url, {
@@ -63,15 +68,11 @@ let app = new Vue({
                     random: this.random,
                 }
             }).then((res) => {
-                this.changeTab("核对单列表");
-                let allExamInfo = new AllExamInfo(res.data);
-                this.examPlaceInfoList = [];
-                for (let i = 0; i < allExamInfo.list.length; i++) {
-                    this.examPlaceInfoList.push(allExamInfo.list[i]);
-                }
+                this.changeTab("核对单列表(带照片)");
+                this.allExamInfo = new AllExamInfo(res.data);
             });
         },
-        getSubjectInfoMaxCountList: function () {
+        getSubjectInfoMaxCountList() {
             let url = "getSubjectInfoMaxCountList";
             axios.get(url).then((res) => {
                 let list = res.data;
@@ -84,10 +85,13 @@ let app = new Vue({
                 }
             });
         },
-        addPrefixZero: function (num, n) {
+        addPrefixZero(num, n) {
+            if (!num) {
+                return "";
+            }
             return addPrefixZero(num, n);
         },
-        exportExcel: function () {
+        exportExcel() {
             let url = "exportExcel";
             axios.get(url, {
                 params: {
@@ -96,11 +100,15 @@ let app = new Vue({
             }).then((res) => {
             });
         },
-        log: function (data) {
+        log(data) {
             console.log(data);
         },
-        changeSubjectInfo: function () {
+        changeSubjectInfo() {
             this.showSubjectInfo = !this.showSubjectInfo;
+        },
+        changeTicketPicShow() {
+            this.showTicketSinglePic = !this.showTicketSinglePic;
+            this.ticketSingleTd["min-width"] = this.showTicketSinglePic ? "250px" : "330px";
         },
     },
 
