@@ -38,8 +38,32 @@
         min-width: 100px;
     }
 
+    #tables5 table {
+        border-collapse: collapse;
+    }
+
+    #tables5 .table-stickers-tr-title td {
+        border: 1px solid black;
+        padding: 0;
+        text-align: center;
+        font-size: 20px;
+        font-family: 宋体, serif;
+        height: 25px;
+        min-width: 80px;
+    }
+
+    #tables5 .table-stickers-tr-body td {
+        border: 1px solid black;
+        padding: 0;
+        text-align: center;
+        font-size: 20px;
+        font-family: 宋体, serif;
+        height: 40px;
+        min-width: 80px;
+    }
+
     .table-title {
-        font-size: 30px;
+        font-size: 28px;
         margin: 10px;
         font-family: 黑体, serif;
     }
@@ -265,6 +289,7 @@
         <h2>{{tab}}</h2>
         <button v-on:click="changeTab('核对单列表(带照片)')">切换至 核对单列表(带照片)</button>
         <button v-on:click="changeTab('核对单列表(无照片)')">切换至 核对单列表(无照片)</button>
+        <button v-on:click="changeTab('核对单列表(桌贴样式)')">切换至 核对单列表(桌贴样式)</button>
         <button v-on:click="changeTab('准考证列表')">切换至 准考证列表</button>
         <button v-on:click="changeTab('准考证列表(单张)')">切换至 准考证列表(单张)</button>
         <hr>
@@ -382,6 +407,68 @@
             </template>
         </div>
 
+        <div id="tables5" class="print middle" v-if="tab === '核对单列表(桌贴样式)'">
+            <div class="no-print">
+                <label>
+                    每页数量：
+                    <input v-model="tableStickersPerPageCount">
+                </label>
+                <label>
+                    标题：
+                    <input v-model="tableStickersTitle">
+                </label>
+                <hr>
+            </div>
+            <!--科目下的单个试场-->
+            <template v-for="(room, index) in allExamInfo.rooms">
+                <template v-for="row in Math.ceil(room.persons.length / tableStickersPerPageCount)">
+
+                    <table>
+                        <caption>
+                            <div style="margin-top: -5px; margin-bottom: 15px;">
+                                <p>{{tableStickersTitle}}</p>
+                                <!--考点-科目-试场号-->
+                                <span style="float: left">考点：{{room.examPlaceName}}</span>
+                                <span>{{room.subjectName}}({{room.subjectType}})</span>
+                                <span style="float: right">试场：{{room.roomName}}</span>
+                            </div>
+                        </caption>
+
+                        <tbody>
+                        <template
+                                v-for="(person, col) in room.persons.slice((row - 1) * tableStickersPerPageCount, row * tableStickersPerPageCount)">
+                            <template>
+                                <tr class="table-stickers-tr-title">
+                                    <td>座位号</td>
+                                    <td>准考证号</td>
+                                    <td>姓名</td>
+                                    <td>类别</td>
+                                    <td>考试时间</td>
+                                </tr>
+                                <tr class="table-stickers-tr-body">
+                                    <td>{{person.seatNo}}</td>
+                                    <td>{{person.examNumber}}</td>
+                                    <td>{{person.name}}</td>
+                                    <td>
+                                        <span v-if="person.subjectName">
+                                            {{person.subjectName}}
+                                        </span>
+                                        <span v-if="person.subjectType">
+                                            {{person.subjectType}}
+                                        </span>
+                                    </td>
+                                    <td>{{person.time}}</td>
+                                </tr>
+                                <br>
+                            </template>
+                        </template>
+                        </tbody>
+                    </table>
+                    <div style="page-break-after:always;"></div>
+                </template>
+            </template>
+        </div>
+
 
         <div id="ticket" class="print middle" style="width: 2000px" v-if="tab === '准考证列表'">
             <template v-for="row in Math.ceil(allExamInfo.persons.length / ticketColCount)">
@@ -441,7 +528,13 @@
 
         <div id="ticket-single" class="print middle" v-if="tab === '准考证列表(单张)'">
             <div class="no-print">
+                <label>
+                    备注：
+                    <textarea v-model="ticketSingleMsg" style="width: 400px; height: 150px"></textarea>
+                </label>
+                <br>
                 <button @click="changeTicketPicShow()">显示/隐藏照片</button>
+                <hr>
             </div>
             <!--单个科目，遍历下属的每个试场-->
             <template v-for="(person, col) in allExamInfo.persons">
@@ -497,6 +590,11 @@
                         </td>
                         <td :style="ticketSingleTd" colspan="2">
                             座位号：{{person.seatNo}}
+                        </td>
+                    </tr>
+                    <tr class="ticket-single-main" v-if="ticketSingleMsg">
+                        <td :style="ticketSingleTd" colspan="3">
+                            <p v-for="msg in displayTicketSingleMsg()">{{msg}}</p>
                         </td>
                     </tr>
                 </table>

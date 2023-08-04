@@ -13,6 +13,7 @@ let app = new Vue({
         subjectInfoMaxCountMap: {},
         random: 0,
         tableTitle: "嘉兴市职业技能操作考试试场核对单",
+        tableStickersTitle: "嘉兴市职业技能操作考试试场桌贴",
         emptyPng: "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
         advance: false,
         printTitle: "准考证",
@@ -29,8 +30,11 @@ let app = new Vue({
         ticketSingleTd: {
             border: "1px solid black",
             padding: "8px",
-            "min-width": "250px"
-        }
+            "min-width": "250px",
+            "max-width": "600px",
+        },
+        ticketSingleMsg: "",
+        tableStickersPerPageCount: 10,
     },
     created() {
         this.imgHeight = this.imgWidth * 1.4;
@@ -109,6 +113,9 @@ let app = new Vue({
         changeTicketPicShow() {
             this.showTicketSinglePic = !this.showTicketSinglePic;
             this.ticketSingleTd["min-width"] = this.showTicketSinglePic ? "250px" : "330px";
+        },
+        displayTicketSingleMsg() {
+            return this.ticketSingleMsg.split("\n");
         },
     },
 
