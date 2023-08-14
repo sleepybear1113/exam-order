@@ -1,5 +1,6 @@
 package cn.xiejx.examorder.fxml;
 
+import cn.xiejx.examorder.config.AppProperties;
 import cn.xiejx.examorder.entity.ExamRoomInfo;
 import cn.xiejx.examorder.entity.PersonInfo;
 import cn.xiejx.examorder.excel.Read;
@@ -79,7 +80,7 @@ public class IndexFxml {
         Environment environment = SpringContextUtil.getBean(Environment.class);
         String port = environment.getProperty("server.port");
         String urlRaw = "http://127.0.0.1:%s".formatted(port);
-        String url = urlRaw + "?version=1.3";
+        String url = urlRaw + "?version=" + SpringContextUtil.getBean(AppProperties.class).getVersion();
         String osName = System.getProperty("os.name", "");
         try {
             if (osName.startsWith("Mac OS")) {

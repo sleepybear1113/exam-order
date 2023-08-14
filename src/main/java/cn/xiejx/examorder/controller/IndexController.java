@@ -1,7 +1,9 @@
 package cn.xiejx.examorder.controller;
 
+import cn.xiejx.examorder.config.AppProperties;
 import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.fxml.IndexFxml;
+import cn.xiejx.examorder.utils.SpringContextUtil;
 import com.alibaba.excel.EasyExcel;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
@@ -139,5 +141,10 @@ public class IndexController {
         });
 
         return true;
+    }
+
+    @RequestMapping("/getVersion")
+    public String getVersion() {
+        return SpringContextUtil.getBean(AppProperties.class).getVersion();
     }
 }

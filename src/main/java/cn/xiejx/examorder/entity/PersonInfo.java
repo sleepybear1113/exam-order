@@ -29,6 +29,7 @@ public class PersonInfo {
     @ExcelProperty("姓名")
     private String name;
 
+    @ExcelProperty("性别")
     private String sex;
 
     /**
@@ -36,7 +37,8 @@ public class PersonInfo {
      */
     @ExcelProperty("考生号")
     private String examNumber;
-
+    @ExcelProperty("准考证号")
+    private String examNumber2;
 
     @ExcelProperty("类别代码")
     private String subjectType;
@@ -59,8 +61,10 @@ public class PersonInfo {
     /**
      * 身份证号
      */
-    @ExcelProperty("身份证号")
+    @ExcelProperty("证件号码")
     private String idCard;
+    @ExcelProperty("身份证号")
+    private String idCard2;
 
     @ExcelProperty("考点代码")
     private String examPlaceId;
@@ -96,6 +100,20 @@ public class PersonInfo {
             if (c >= 0 && c <= 9) {
                 this.sex = c % 2 == 1 ? "男" : "女";
             }
+        }
+    }
+
+    public void setIdCard2(String idCard2) {
+        this.idCard2 = idCard2;
+        if (StringUtils.isBlank(idCard)) {
+            setIdCard(idCard2);
+        }
+    }
+
+    public void setExamNumber2(String examNumber2) {
+        this.examNumber2 = examNumber2;
+        if (StringUtils.isBlank(this.examNumber)) {
+            setExamNumber(examNumber2);
         }
     }
 

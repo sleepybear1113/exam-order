@@ -27,3 +27,5 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+let version = "1.0.0";

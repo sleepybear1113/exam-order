@@ -1,0 +1,4 @@
+server:
+  port: 13322
+app:
+  version: @project.version@
