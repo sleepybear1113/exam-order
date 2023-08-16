@@ -13,6 +13,7 @@ class PersonInfo {
         this.seatNo = props.seatNo;
         this.examNumber = props.examNumber;
         this.examPlaceName = props.examPlaceName;
+        this.originExamPlaceName = props.originExamPlaceName;
         this.idCard = props.idCard;
         this.subjectType = props.subjectType;
         this.subjectTypeName = props.subjectTypeName;

@@ -70,6 +70,9 @@ public class PersonInfo {
     private String examPlaceId;
     @ExcelIgnore
     private String examPlaceName;
+
+    @ExcelProperty("所属学校")
+    private String originExamPlaceName;
     @ExcelProperty("考试时间")
     private String time;
 

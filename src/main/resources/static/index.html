@@ -5,8 +5,8 @@
     <title>核对单</title>
     <script src="js/lib/vue.js"></script>
     <script src="js/lib/axios.min.js"></script>
-    <script src="js/utils/util.js?version=1.4.2"></script>
-    <script src="js/classes.js?version=1.4.2"></script>
+    <script src="js/utils/util.js?version=1.4.3"></script>
+    <script src="js/classes.js?version=1.4.3"></script>
 </head>
 <style>
     .info {
@@ -547,12 +547,12 @@
                     </tr>
                     <tr class="ticket-single-main">
                         <td :style="ticketSingleTd" colspan="2">考生号：{{person.examNumber}}</td>
-                        <td :style="ticketSingleTd" rowspan="4" v-if="tableConfig.table4.showTicketSinglePic">
+                        <td :style="ticketSingleTd" rowspan="3" v-if="tableConfig.table4.showTicketSinglePic">
                             <template>
                                 <div class="rrr">
                                     <img :src="picHost + person.picSrc" alt=""
-                                         :width="ticketImgWidth + 'px'"
-                                         :height="ticketImgWidth + 'px'">
+                                         :width="ticketImgWidth * 1.5 + 'px'"
+                                         :height="ticketImgWidth * 1.5 + 'px'">
                                 </div>
                             </template>
                         </td>
@@ -564,10 +564,12 @@
                         <td :style="ticketSingleTd" colspan="">考生姓名：{{person.name}}</td>
                         <td :style="ticketSingleTd" colspan="1">性别：{{person.sex}}</td>
                     </tr>
-                    <tr class="ticket-single-main"
-                        v-show="person.examPlaceName !=null && person.examPlaceName.length > 0">
-                        <td :style="ticketSingleTd" colspan="2">
+                    <tr class="ticket-single-main">
+                        <td v-if="person.examPlaceName !=null && person.examPlaceName.length > 0" :style="ticketSingleTd" colspan="1">
                             考点：{{person.examPlaceName}}
+                        </td>
+                        <td v-if="person.originExamPlaceName !=null && person.originExamPlaceName.length > 0" :style="ticketSingleTd" colspan="2">
+                            所属学校：{{person.originExamPlaceName}}
                         </td>
                     </tr>
                     <tr class="ticket-single-main">
