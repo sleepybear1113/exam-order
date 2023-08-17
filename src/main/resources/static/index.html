@@ -5,8 +5,8 @@
     <title>核对单</title>
     <script src="js/lib/vue.js"></script>
     <script src="js/lib/axios.min.js"></script>
-    <script src="js/utils/util.js?version=1.4.3"></script>
-    <script src="js/classes.js?version=1.4.3"></script>
+    <script src="js/utils/util.js?version=1.4.3.2"></script>
+    <script src="js/classes.js?version=1.4.3.2"></script>
 </head>
 <style>
     .info {
@@ -604,7 +604,7 @@
                         </td>
                     </tr>
                 </table>
-                <div style="page-break-after:always;"></div>
+                <div v-if="!tableConfig.table4.specificExamPlaceName || tableConfig.table4.specificExamPlaceName === person.originExamPlaceName" style="page-break-after:always;"></div>
             </template>
         </div>
     </div>
