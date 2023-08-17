@@ -34,7 +34,7 @@ let app = new Vue({
                 title1: "嘉兴市职业技能操作考试试场核对单",
                 title2: "",
                 showExamNumber: true,
-                showNumber:true,
+                showNumber: true,
                 showIdCard: true,
                 showName: true,
                 showSeatNo: true,
@@ -48,7 +48,7 @@ let app = new Vue({
                 showIdCard: true,
                 showName: true,
                 showSeatNo: true,
-                tableStickersPerPageCount:10,
+                tableStickersPerPageCount: 10,
                 ticketColCount: 2,
             },
             table4: {
@@ -60,6 +60,7 @@ let app = new Vue({
                 showSeatNo: true,
                 ticketSingleMsg: "",
                 showTicketSinglePic: true,
+                specificExamPlaceName: "",
             },
         },
     },
@@ -129,5 +130,31 @@ let app = new Vue({
                 version = res.data;
             });
         },
+        getPersonOriginSchool() {
+            let persons = this.allExamInfo.persons;
+            if (!persons || persons.length === 0) {
+                return [];
+            }
+            let result = [];
+            for (let i = 0; i < persons.length; i++) {
+                let person = persons[i];
+                if (person.originExamPlaceName) {
+                    result.push(person.originExamPlaceName);
+                }
+            }
+            return this.toUniqueArr(result);
+        },
+        toUniqueArr(arr) {
+            let uniqueArr = [];
+            let seen = new Set();
+            for (let i = 0; i < arr.length; i++) {
+                if (!seen.has(arr[i])) {
+                    seen.add(arr[i]);
+                    uniqueArr.push(arr[i]);
+                }
+            }
+
+            return uniqueArr;
+        }
     },
 });

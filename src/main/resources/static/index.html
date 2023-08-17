@@ -533,10 +533,16 @@
                 <button @click="changeTicketPicShow()">显示/隐藏照片(已{{toShowHideStr(tableConfig.table4.showTicketSinglePic)}})
                 </button>
                 <hr>
+                <div style="flex-wrap: wrap">
+                    <span>{{tableConfig.table4.specificExamPlaceName? tableConfig.table4.specificExamPlaceName: "全部学校"}}</span>
+                    <br>
+                    <button @click="tableConfig.table4.specificExamPlaceName = ''">全部</button>
+                    <button v-for="name in getPersonOriginSchool()" @click="tableConfig.table4.specificExamPlaceName = name">{{name}}</button>
+                </div>
             </div>
             <!--单个科目，遍历下属的每个试场-->
             <template v-for="(person, col) in allExamInfo.persons">
-                <table>
+                <table v-if="!tableConfig.table4.specificExamPlaceName || tableConfig.table4.specificExamPlaceName === person.originExamPlaceName">
                     <tr class="ticket-single-title">
                         <td colspan="3">
                             <template>
