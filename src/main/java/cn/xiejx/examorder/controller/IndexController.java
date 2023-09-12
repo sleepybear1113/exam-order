@@ -1,6 +1,7 @@
 package cn.xiejx.examorder.controller;
 
 import cn.xiejx.examorder.config.AppProperties;
+import cn.xiejx.examorder.constants.Constants;
 import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.fxml.IndexFxml;
 import cn.xiejx.examorder.utils.SpringContextUtil;
@@ -30,11 +31,12 @@ public class IndexController {
 
     @RequestMapping("/processPersonByGroup")
     public AllExamInfo processPersonByGroup(Long random) {
-        if (CollectionUtils.isEmpty(IndexFxml.personInfoList)) {
+        ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(IndexFxml.personInfoKey);
+        if (CollectionUtils.isEmpty(readPersonInfo.getPersonInfoList())) {
             return allExamInfo;
         }
         List<PersonInfo> personInfoListCopy = new ArrayList<>();
-        for (PersonInfo personInfo : IndexFxml.personInfoList) {
+        for (PersonInfo personInfo : readPersonInfo.getPersonInfoList()) {
             personInfoListCopy.add(personInfo.copy());
         }
 

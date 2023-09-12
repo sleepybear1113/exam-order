@@ -1,9 +1,6 @@
 package cn.xiejx.examorder.excel;
 
-import cn.xiejx.examorder.entity.ExamRoomInfo;
-import cn.xiejx.examorder.entity.ExamRoomInfoExcelListener;
-import cn.xiejx.examorder.entity.PersonInfo;
-import cn.xiejx.examorder.entity.PersonExamExcelListener;
+import cn.xiejx.examorder.entity.*;
 import com.alibaba.excel.EasyExcel;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,9 +25,9 @@ public class Read {
         System.out.println("time:" + (t1 - t0) + " count:" + data.size());
     }
 
-    public static List<PersonInfo> readPersonData(String fileName) {
+    public static List<PersonInfo> readPersonData(FileStreamDto fileStreamDto) {
         PersonExamExcelListener<PersonInfo> readListener = new PersonExamExcelListener<>();
-        EasyExcel.read(fileName, PersonInfo.class, readListener).sheet().doRead();
+        EasyExcel.read(fileStreamDto.getByteArrayInputStream(), PersonInfo.class, readListener).sheet().doRead();
         return readListener.getData();
     }
 

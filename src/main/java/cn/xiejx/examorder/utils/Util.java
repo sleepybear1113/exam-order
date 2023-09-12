@@ -122,4 +122,19 @@ public class Util {
             }
         }
     }
+
+    public static String getRandomStr(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int random = (int) (Math.random() * 62);
+            if (random < 10) {
+                sb.append(random);
+            } else if (random < 36) {
+                sb.append((char) (random + 55));
+            } else {
+                sb.append((char) (random + 61));
+            }
+        }
+        return sb.toString();
+    }
 }

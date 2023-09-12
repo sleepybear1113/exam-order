@@ -1,10 +1,14 @@
 package cn.xiejx.examorder.fxml;
 
 import cn.xiejx.examorder.config.AppProperties;
+import cn.xiejx.examorder.constants.Constants;
 import cn.xiejx.examorder.entity.ExamRoomInfo;
+import cn.xiejx.examorder.entity.FileStreamDto;
 import cn.xiejx.examorder.entity.PersonInfo;
+import cn.xiejx.examorder.entity.ReadPersonInfo;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.SpringContextUtil;
+import cn.xiejx.examorder.utils.Util;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,8 +51,9 @@ public class IndexFxml {
     public Button download1;
 
     public Button download2;
-    private String dataPath;
     private String roomPath;
+
+    public static String personInfoKey = "";
 
     private File lastChosenFile = new File(System.getProperty("user.dir"));
 
@@ -62,7 +67,8 @@ public class IndexFxml {
     }
 
     public void openBrowser(ActionEvent actionEvent) {
-        if (CollectionUtils.isEmpty(personInfoList)) {
+        ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(IndexFxml.personInfoKey);
+        if (CollectionUtils.isEmpty(readPersonInfo.getPersonInfoList())) {
             addInfo("没有有效的考生数据！请重新选择Excel文件！");
             return;
         }
@@ -144,17 +150,18 @@ public class IndexFxml {
         File file = fileChooser.showOpenDialog(new Stage());
         if (file == null) {
             dataPathLabel.setText("未选择！");
-            dataPath = null;
             return;
         }
         lastChosenFile = file.getParentFile();
         String fileName = file.getName();
         dataPathLabel.setText(fileName);
-        dataPath = file.getAbsolutePath();
+
+        FileStreamDto fileStreamDto = new FileStreamDto();
+        fileStreamDto.setByteArrayInputStream(file);
 
         Runnable runnable = null;
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            runnable = () -> readPersonExcel(dataPath);
+            runnable = () -> personInfoKey = readPersonExcel(fileStreamDto);
         }
         new Thread(runnable).start();
     }
@@ -186,20 +193,32 @@ public class IndexFxml {
         new Thread(runnable).start();
     }
 
-    private void readPersonExcel(String filePath) {
-        personInfoList = Read.readPersonData(filePath);
+    private String readPersonExcel(FileStreamDto fileStreamDto) {
+        List<PersonInfo> personInfoList = Read.readPersonData(fileStreamDto);
         List<String> valid = PersonInfo.valid(personInfoList);
-        String boo = valid.get(0);
-        valid.remove(0);
-        for (String s : valid) {
-            addInfo(s, false);
+
+        String key = Util.getRandomStr(8);
+        ReadPersonInfo readPersonInfo = new ReadPersonInfo();
+        readPersonInfo.setKey(key);
+        readPersonInfo.setPersonInfoList(personInfoList);
+        readPersonInfo.setValidList(valid);
+
+        if (Constants.isGui) {
+            String boo = valid.get(0);
+            valid.remove(0);
+            for (String s : valid) {
+                addInfo(s, false);
+            }
+            if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
+                addInfo("读取失败！请重新选择！");
+                personInfoList.clear();
+                key = "";
+            } else {
+                addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(fileStreamDto.getOriginalFilename()).getName(), personInfoList.size()));
+            }
         }
-        if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
-            addInfo("读取失败！请重新选择！");
-            personInfoList.clear();
-            return;
-        }
-        addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), personInfoList.size()));
+
+        return key;
     }
 
     private void readRoomExcel(String filePath) {
@@ -252,6 +271,9 @@ public class IndexFxml {
     }
 
     public void addInfo(String s, boolean toBottom) {
+        if (!Constants.isGui) {
+            return;
+        }
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("[HH:mm:ss.SSS]");
         LocalDateTime now = LocalDateTime.now();
         Platform.runLater(() -> {
