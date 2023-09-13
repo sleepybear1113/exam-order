@@ -51,15 +51,11 @@ public class IndexFxml {
     public Button download1;
 
     public Button download2;
-    private String roomPath;
 
     public static String personInfoKey = "";
+    public static String placeSubjectRoomInfoKey = "";
 
     private File lastChosenFile = new File(System.getProperty("user.dir"));
-
-    public static List<PersonInfo> personInfoList = new ArrayList<>();
-
-    public static Map<String, Map<String, List<ExamRoomInfo>>> placeSubjectRoomInfoMap = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -73,7 +69,7 @@ public class IndexFxml {
             return;
         }
 
-        if (MapUtils.isEmpty(placeSubjectRoomInfoMap)) {
+        if (MapUtils.isEmpty(Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey))) {
             addInfo("没有有效的考场场次数据！请重新选择Excel文件！");
             return;
         }
@@ -184,11 +180,13 @@ public class IndexFxml {
         lastChosenFile = file.getParentFile();
         String fileName = file.getName();
         roomPathLabel.setText(fileName);
-        roomPath = file.getAbsolutePath();
+
+        FileStreamDto fileStreamDto = new FileStreamDto();
+        fileStreamDto.setByteArrayInputStream(file);
 
         Runnable runnable = null;
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            runnable = () -> readRoomExcel(roomPath);
+            runnable = () -> placeSubjectRoomInfoKey = readRoomExcel(fileStreamDto);
         }
         new Thread(runnable).start();
     }
@@ -218,19 +216,22 @@ public class IndexFxml {
             }
         }
 
+        Constants.READ_PERSON_INFO_CACHER.put(key,readPersonInfo);
         return key;
     }
 
-    private void readRoomExcel(String filePath) {
-        List<ExamRoomInfo> examRoomInfoInfoList = Read.readRoomData(filePath);
+    private String readRoomExcel(FileStreamDto fileStreamDto) {
+        List<ExamRoomInfo> examRoomInfoInfoList = Read.readRoomData(fileStreamDto);
 
         if (CollectionUtils.isEmpty(examRoomInfoInfoList)) {
             addInfo("没有试场信息，请检测模板填写是否正确");
-            return;
+            return "";
         }
         examRoomInfoInfoList.forEach(ExamRoomInfo::clearInvalidRoomName);
 
-        placeSubjectRoomInfoMap.clear();
+        String key = Util.getRandomStr(8);
+        HashMap<String, Map<String, List<ExamRoomInfo>>> map = new HashMap<>();
+        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, map);
 
         Set<String> placeIdSet = new HashSet<>();
         Set<String> subjectTypeSet = new HashSet<>();
@@ -243,13 +244,13 @@ public class IndexFxml {
             placeIdSet.add(examPlaceId);
             subjectTypeSet.add(subjectType);
 
-            Map<String, List<ExamRoomInfo>> subjectExamRoomInfoMap = placeSubjectRoomInfoMap.get(examPlaceId);
+            Map<String, List<ExamRoomInfo>> subjectExamRoomInfoMap = map.get(examPlaceId);
             if (subjectExamRoomInfoMap == null) {
                 subjectExamRoomInfoMap = new HashMap<>();
                 List<ExamRoomInfo> examRoomInfos = new ArrayList<>();
                 examRoomInfos.add(examRoomInfo);
                 subjectExamRoomInfoMap.put(subjectType, examRoomInfos);
-                placeSubjectRoomInfoMap.put(examPlaceId, subjectExamRoomInfoMap);
+                map.put(examPlaceId, subjectExamRoomInfoMap);
             } else {
                 List<ExamRoomInfo> examRoomInfos = subjectExamRoomInfoMap.get(subjectType);
                 if (CollectionUtils.isEmpty(examRoomInfos)) {
@@ -262,8 +263,12 @@ public class IndexFxml {
             }
         }
 
-        addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(filePath).getName(), examRoomInfoInfoList.size()));
-        addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
+        if (Constants.isGui) {
+            addInfo("[%s]读取完毕，数据记录数：%s".formatted(fileStreamDto.getOriginalFilename(), examRoomInfoInfoList.size()));
+            addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
+        }
+
+        return key;
     }
 
     public void addInfo(String s) {

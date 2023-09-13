@@ -107,6 +107,7 @@ let app = new Vue({
             axios.get(url, {
                 params: {
                     exportFileName: this.tableConfig.table1.title1,
+                    key: this.allExamInfo.id,
                 }
             }).then((res) => {
             });

@@ -5,6 +5,7 @@ import cn.xiejx.examorder.constants.Constants;
 import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.fxml.IndexFxml;
 import cn.xiejx.examorder.utils.SpringContextUtil;
+import cn.xiejx.examorder.utils.Util;
 import com.alibaba.excel.EasyExcel;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
@@ -30,8 +31,21 @@ public class IndexController {
     private final AllExamInfo allExamInfo = new AllExamInfo();
 
     @RequestMapping("/processPersonByGroup")
-    public AllExamInfo processPersonByGroup(Long random) {
-        ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(IndexFxml.personInfoKey);
+    public AllExamInfo processPersonByGroup(Long random, String personInfoKey, String placeSubjectRoomInfoKey) {
+        if (StringUtils.isBlank(personInfoKey) && StringUtils.isBlank(placeSubjectRoomInfoKey)) {
+            personInfoKey = IndexFxml.personInfoKey;
+            placeSubjectRoomInfoKey = IndexFxml.placeSubjectRoomInfoKey;
+        }
+
+        AllExamInfo allExamInfo = new AllExamInfo();
+        String key = Util.getRandomStr(8);
+        allExamInfo.setId(key);
+        ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(personInfoKey);
+        Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
+        if (readPersonInfo == null || mapMap == null) {
+            return allExamInfo;
+        }
+
         if (CollectionUtils.isEmpty(readPersonInfo.getPersonInfoList())) {
             return allExamInfo;
         }
@@ -40,24 +54,27 @@ public class IndexController {
             personInfoListCopy.add(personInfo.copy());
         }
 
-        IndexFxml.placeSubjectRoomInfoMap.values().forEach(map -> map.values().forEach(examRoomInfoList -> examRoomInfoList.forEach(examRoomInfo -> examRoomInfo.setList(new ArrayList<>()))));
+        mapMap.values().forEach(map -> map.values().forEach(examRoomInfoList -> examRoomInfoList.forEach(examRoomInfo -> examRoomInfo.setList(new ArrayList<>()))));
 
-        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, IndexFxml.placeSubjectRoomInfoMap, random);
+        List<ExamPlaceInfo> examPlaceInfoList = ExamPlaceInfo.processPersonByGroup(personInfoListCopy, mapMap, random);
         allExamInfo.setList(examPlaceInfoList);
         allExamInfo.processPicSrc(IndexFxml.picPath);
 
         AllExamInfo res = new AllExamInfo();
+        res.setId(allExamInfo.getId());
         res.setList(allExamInfo.getList());
 //        res.setList(res.getList().subList(0,2));
         res.setRooms(Room.build(res.getList()));
         res.setPersons(Room.getSortedPersons(res.getRooms()));
+
+        Constants.ALL_EXAM_INFO_CACHER.set(key, allExamInfo);
         return res;
     }
 
     @RequestMapping("/getSubjectInfoMaxCountList")
     public List<ExamRoomInfo> getSubjectInfoMaxCountList() {
         List<ExamRoomInfo> res = new ArrayList<>();
-        for (Map<String, List<ExamRoomInfo>> map : IndexFxml.placeSubjectRoomInfoMap.values()) {
+        for (Map<String, List<ExamRoomInfo>> map : Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey).values()) {
             for (List<ExamRoomInfo> list : map.values()) {
                 res.addAll(list);
             }
@@ -75,12 +92,13 @@ public class IndexController {
         for (ExamRoomInfo examRoomInfo : list) {
             String examPlaceId = examRoomInfo.getExamPlaceId();
             String subjectType = examRoomInfo.getSubjectType();
-            Map<String, List<ExamRoomInfo>> map = IndexFxml.placeSubjectRoomInfoMap.get(examPlaceId);
+            Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey);
+            Map<String, List<ExamRoomInfo>> map = mapMap.get(examPlaceId);
             if (MapUtils.isEmpty(map)) {
-                if (IndexFxml.placeSubjectRoomInfoMap.size() != 1) {
+                if (mapMap.size() != 1) {
                     continue;
                 }
-                map = IndexFxml.placeSubjectRoomInfoMap.get(null);
+                map = mapMap.get(null);
                 if (MapUtils.isEmpty(map)) {
                     continue;
                 }
@@ -104,12 +122,16 @@ public class IndexController {
     }
 
     @RequestMapping("/exportExcel")
-    public Boolean exportExcel(String exportFileName) {
-        List<PersonInfo> data = new ArrayList<>();
+    public Boolean exportExcel(String exportFileName, String key) {
+        AllExamInfo allExamInfo = Constants.ALL_EXAM_INFO_CACHER.get(key);
+        if (allExamInfo == null) {
+            return false;
+        }
         List<ExamPlaceInfo> list = allExamInfo.getList();
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
+        List<PersonInfo> data = new ArrayList<>();
         for (ExamPlaceInfo examPlaceInfo : list) {
             for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
                 if (CollectionUtils.isEmpty(examRoomInfo.getRoomList())) {

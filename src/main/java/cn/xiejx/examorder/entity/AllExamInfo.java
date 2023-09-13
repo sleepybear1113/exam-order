@@ -16,6 +16,7 @@ import java.util.*;
  */
 @Data
 public class AllExamInfo {
+    private String id;
     @JsonIgnore
     private List<ExamPlaceInfo> list;
 

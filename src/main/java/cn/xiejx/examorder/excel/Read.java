@@ -31,9 +31,9 @@ public class Read {
         return readListener.getData();
     }
 
-    public static List<ExamRoomInfo> readRoomData(String fileName) {
+    public static List<ExamRoomInfo> readRoomData(FileStreamDto fileStreamDto) {
         ExamRoomInfoExcelListener<ExamRoomInfo> readListener = new ExamRoomInfoExcelListener<>();
-        EasyExcel.read(fileName, ExamRoomInfo.class, readListener).sheet().doRead();
+        EasyExcel.read(fileStreamDto.getByteArrayInputStream(), ExamRoomInfo.class, readListener).sheet().doRead();
         return ExamRoomInfo.buildIndex(readListener.getData());
     }
 }

@@ -27,6 +27,7 @@ class AllExamInfo {
             return;
         }
 
+        this.id = props.id;
         this.rooms = props.rooms.map(item => new Room(item));
         this.persons = props.persons.map(item => new PersonInfo(item));
     }
