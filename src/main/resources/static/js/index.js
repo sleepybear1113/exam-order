@@ -70,6 +70,35 @@ let app = new Vue({
         this.picHost = window.location.origin;
     },
     methods: {
+        uploadExcel(inputId, type) {
+            let url = "/upload/file";
+            let input = document.getElementById(inputId);
+            const file = input.files[0];
+            if (!file) {
+                alert("请选择文件");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("deleteAfterUpload", true);
+            formData.append("expireTimeMinutes", 60);
+
+            this.clear(true);
+            this.fileUploading = true;
+            this.exportKey = "";
+
+            axios.post(url, formData, {
+                'Content-type': 'multipart/form-data'
+            }).then(res => {
+                let uploadFileInfoDto = new UploadFileInfoDto(res.data.result);
+
+            }).catch(err => {
+                // 出现错误时的处理
+                alert("上传失败，请选择其他文件");
+                this.fileUploading = false;
+            });
+        },
+
         adjustImgSize() {
             this.imgHeight = this.imgWidth * 1.3;
         },

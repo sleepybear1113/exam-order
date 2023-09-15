@@ -21,6 +21,14 @@ class PersonInfo {
     }
 }
 
+class UploadFileInfoDto {
+    constructor(props = {}) {
+        this.id = props.id;
+        this.filename = props.filename;
+        this.fileStreamDtoId = props.fileStreamDtoId;
+    }
+}
+
 class AllExamInfo {
     constructor(props) {
         if (props == null) {

@@ -28,7 +28,6 @@ import java.util.*;
  */
 @RestController
 public class IndexController {
-    private final AllExamInfo allExamInfo = new AllExamInfo();
 
     @RequestMapping("/processPersonByGroup")
     public AllExamInfo processPersonByGroup(Long random, String personInfoKey, String placeSubjectRoomInfoKey) {

@@ -157,11 +157,13 @@ public class IndexFxml {
 
         Runnable runnable = null;
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            runnable = () -> personInfoKey = readPersonExcel(fileStreamDto);
+            runnable = () -> {
+                Constants.READ_PERSON_INFO_CACHER.remove(personInfoKey);
+                personInfoKey = readPersonExcel(fileStreamDto);
+            };
         }
         new Thread(runnable).start();
     }
-
 
     public void chooseRoomPath(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -186,7 +188,10 @@ public class IndexFxml {
 
         Runnable runnable = null;
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            runnable = () -> placeSubjectRoomInfoKey = readRoomExcel(fileStreamDto);
+            runnable = () -> {
+                Constants.EXAM_ROOM_INFO_MAP_CACHER.remove(placeSubjectRoomInfoKey);
+                placeSubjectRoomInfoKey = readRoomExcel(fileStreamDto);
+            };
         }
         new Thread(runnable).start();
     }
@@ -216,7 +221,7 @@ public class IndexFxml {
             }
         }
 
-        Constants.READ_PERSON_INFO_CACHER.put(key,readPersonInfo);
+        Constants.READ_PERSON_INFO_CACHER.put(key, readPersonInfo);
         return key;
     }
 

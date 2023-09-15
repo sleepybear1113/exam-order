@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppProperties {
 
-    private String version;
-
     @Value("${app.version}")
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    private String version;
+    @Value("${my-config.tmp-dir}")
+    private String tmpDir;
+    @Value("${my-config.export-tmp-dir}")
+    private String exportTmpDir;
 }

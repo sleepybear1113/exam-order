@@ -11,6 +11,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 
 /**
  * There is description
@@ -136,5 +139,60 @@ public class Util {
             }
         }
         return sb.toString();
+    }
+
+    public static String bytesToMd5(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        try {
+            // 创建 MessageDigest 实例并指定算法为 MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // 将字节数组传递给 MessageDigest 更新
+            md.update(bytes);
+
+            // 计算哈希值并获取结果字节数组
+            byte[] digest = md.digest();
+
+            // 将结果字节数组转换为十六进制字符串
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                // 使用 "%02x" 格式将每个字节转换为两位十六进制数
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("无法找到 MD5 算法");
+            return null;
+        }
+    }
+
+    public static String getTime() {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int second = Calendar.getInstance().get(Calendar.SECOND);
+        int millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
+        return "%s-%02d-%02d_%02d-%02d-%02d.%03d".formatted(year, month, day, hour, minute, second, millisecond);
+    }
+
+    public static String getFileSize(Long size) {
+        if (size == null) {
+            return "null";
+        }
+        if (size < 1024) {
+            return size + "B";
+        }
+        if (size < 1024 * 1024) {
+            return String.format("%.2fKB", size / 1024.0);
+        }
+        if (size < 1024 * 1024 * 1024) {
+            return String.format("%.2fMB", size / 1024.0 / 1024.0);
+        }
+        return String.format("%.2fGB", size / 1024.0 / 1024.0 / 1024.0);
     }
 }

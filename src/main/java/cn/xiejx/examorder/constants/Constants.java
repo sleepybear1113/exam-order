@@ -4,6 +4,7 @@ import cn.sleepybear.cacher.Cacher;
 import cn.sleepybear.cacher.CacherBuilder;
 import cn.xiejx.examorder.entity.AllExamInfo;
 import cn.xiejx.examorder.entity.ExamRoomInfo;
+import cn.xiejx.examorder.entity.FileStreamDto;
 import cn.xiejx.examorder.entity.ReadPersonInfo;
 
 import java.util.List;
@@ -21,5 +22,7 @@ public class Constants {
     public static final Cacher<String, ReadPersonInfo> READ_PERSON_INFO_CACHER = new CacherBuilder<String, ReadPersonInfo>().scheduleName("READ_PERSON_INFO_CACHER").delay(30, TimeUnit.SECONDS).build();
     public static final Cacher<String, Map<String, Map<String, List<ExamRoomInfo>>>> EXAM_ROOM_INFO_MAP_CACHER = new CacherBuilder<String, Map<String, Map<String, List<ExamRoomInfo>>>>().scheduleName("EXAM_ROOM_INFO_MAP_CACHER").delay(30, TimeUnit.SECONDS).build();
     public static final Cacher<String, AllExamInfo> ALL_EXAM_INFO_CACHER = new CacherBuilder<String, AllExamInfo>().scheduleName("ALL_EXAM_INFO_CACHER").delay(30, TimeUnit.SECONDS).build();
+    public static final Cacher<String, FileStreamDto> FILE_STREAM_DTO_CACHER = new CacherBuilder<String, FileStreamDto>().scheduleName("FILE_STREAM_DTO_CACHER").delay(30, TimeUnit.SECONDS).build();
 
+    public static final String PREFIX = "/api-file-convert";
 }
