@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.Arrays;
+
 /**
  * @author xjx
  */
@@ -19,6 +21,12 @@ public class ExamOrderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        for (String arg : args) {
+            if ("disable-fx".equals(arg)) {
+                System.out.println("禁用JavaFx, 将以命令行模式运行");
+                return;
+            }
+        }
         Runnable runnable = () -> launch(args);
         new Thread(runnable).start();
     }

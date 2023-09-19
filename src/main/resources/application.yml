@@ -2,3 +2,6 @@ server:
   port: 13322
 app:
   version: @project.version@
+my-config:
+  tmp-dir: tmp/
+  export-tmp-dir: tmp/export/

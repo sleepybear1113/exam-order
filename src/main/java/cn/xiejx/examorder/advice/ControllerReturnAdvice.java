@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author XJX
  * @date 2021/8/10 1:59
  */
-@RestControllerAdvice(basePackages = {"cn.sleepybear.fileconvert.controller"})
+@RestControllerAdvice(basePackages = {"cn.xiejx.examorder.controller"})
 @Slf4j
 public class ControllerReturnAdvice implements ResponseBodyAdvice<Object> {
     @Override

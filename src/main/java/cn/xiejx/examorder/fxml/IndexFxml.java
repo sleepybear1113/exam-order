@@ -7,6 +7,7 @@ import cn.xiejx.examorder.entity.FileStreamDto;
 import cn.xiejx.examorder.entity.PersonInfo;
 import cn.xiejx.examorder.entity.ReadPersonInfo;
 import cn.xiejx.examorder.excel.Read;
+import cn.xiejx.examorder.logic.ProcessLogic;
 import cn.xiejx.examorder.utils.SpringContextUtil;
 import cn.xiejx.examorder.utils.Util;
 import javafx.application.Platform;
@@ -22,6 +23,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -159,7 +161,24 @@ public class IndexFxml {
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
             runnable = () -> {
                 Constants.READ_PERSON_INFO_CACHER.remove(personInfoKey);
-                personInfoKey = readPersonExcel(fileStreamDto);
+                personInfoKey = ProcessLogic.readPersonExcel(fileStreamDto);
+
+                ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(personInfoKey);
+                List<String> validList = readPersonInfo.getValidList();
+                List<PersonInfo> personInfoList = readPersonInfo.getPersonInfoList();
+                String boo = validList.get(0);
+                validList.remove(0);
+                for (String s : validList) {
+                    addInfo(s, false);
+                }
+                if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
+                    addInfo("读取失败！请重新选择！");
+                    personInfoList.clear();
+                    Constants.READ_PERSON_INFO_CACHER.remove(personInfoKey);
+                    personInfoKey = "";
+                } else {
+                    addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(fileStreamDto.getOriginalFilename()).getName(), personInfoList.size()));
+                }
             };
         }
         new Thread(runnable).start();
@@ -190,90 +209,36 @@ public class IndexFxml {
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
             runnable = () -> {
                 Constants.EXAM_ROOM_INFO_MAP_CACHER.remove(placeSubjectRoomInfoKey);
-                placeSubjectRoomInfoKey = readRoomExcel(fileStreamDto);
+                placeSubjectRoomInfoKey = ProcessLogic.readRoomExcel(fileStreamDto);
+                if (StringUtils.isEmpty(placeSubjectRoomInfoKey)) {
+                    addInfo("没有试场信息，请检测模板填写是否正确");
+                    return;
+                }
+
+                Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
+                if (MapUtils.isEmpty(mapMap)) {
+                    addInfo("没有试场信息，请检测模板填写是否正确");
+                    return;
+                }
+
+                int totalRoomCount = 0;
+                Set<String> placeIdSet = new HashSet<>();
+                Set<String> subjectTypeSet = new HashSet<>();
+                for (Map<String, List<ExamRoomInfo>> map : mapMap.values()) {
+                    for (List<ExamRoomInfo> examRoomInfos : map.values()) {
+                        for (ExamRoomInfo examRoomInfo : examRoomInfos) {
+                            totalRoomCount += examRoomInfo.getRoomCount();
+                            placeIdSet.add(examRoomInfo.getExamPlaceId());
+                            subjectTypeSet.add(examRoomInfo.getSubjectType());
+                        }
+                    }
+                }
+
+                addInfo("[%s]读取完毕，数据记录数：%s".formatted(fileStreamDto.getOriginalFilename(), mapMap.size()));
+                addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
             };
         }
         new Thread(runnable).start();
-    }
-
-    private String readPersonExcel(FileStreamDto fileStreamDto) {
-        List<PersonInfo> personInfoList = Read.readPersonData(fileStreamDto);
-        List<String> valid = PersonInfo.valid(personInfoList);
-
-        String key = Util.getRandomStr(8);
-        ReadPersonInfo readPersonInfo = new ReadPersonInfo();
-        readPersonInfo.setKey(key);
-        readPersonInfo.setPersonInfoList(personInfoList);
-        readPersonInfo.setValidList(valid);
-
-        if (Constants.isGui) {
-            String boo = valid.get(0);
-            valid.remove(0);
-            for (String s : valid) {
-                addInfo(s, false);
-            }
-            if (!Boolean.TRUE.toString().equalsIgnoreCase(boo)) {
-                addInfo("读取失败！请重新选择！");
-                personInfoList.clear();
-                key = "";
-            } else {
-                addInfo("[%s]读取完毕，数据记录数：%s".formatted(new File(fileStreamDto.getOriginalFilename()).getName(), personInfoList.size()));
-            }
-        }
-
-        Constants.READ_PERSON_INFO_CACHER.put(key, readPersonInfo);
-        return key;
-    }
-
-    private String readRoomExcel(FileStreamDto fileStreamDto) {
-        List<ExamRoomInfo> examRoomInfoInfoList = Read.readRoomData(fileStreamDto);
-
-        if (CollectionUtils.isEmpty(examRoomInfoInfoList)) {
-            addInfo("没有试场信息，请检测模板填写是否正确");
-            return "";
-        }
-        examRoomInfoInfoList.forEach(ExamRoomInfo::clearInvalidRoomName);
-
-        String key = Util.getRandomStr(8);
-        HashMap<String, Map<String, List<ExamRoomInfo>>> map = new HashMap<>();
-        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, map);
-
-        Set<String> placeIdSet = new HashSet<>();
-        Set<String> subjectTypeSet = new HashSet<>();
-        int totalRoomCount = 0;
-        for (ExamRoomInfo examRoomInfo : examRoomInfoInfoList) {
-            String examPlaceId = examRoomInfo.getExamPlaceId();
-            String subjectType = examRoomInfo.getSubjectType();
-
-            totalRoomCount += examRoomInfo.getRoomCount();
-            placeIdSet.add(examPlaceId);
-            subjectTypeSet.add(subjectType);
-
-            Map<String, List<ExamRoomInfo>> subjectExamRoomInfoMap = map.get(examPlaceId);
-            if (subjectExamRoomInfoMap == null) {
-                subjectExamRoomInfoMap = new HashMap<>();
-                List<ExamRoomInfo> examRoomInfos = new ArrayList<>();
-                examRoomInfos.add(examRoomInfo);
-                subjectExamRoomInfoMap.put(subjectType, examRoomInfos);
-                map.put(examPlaceId, subjectExamRoomInfoMap);
-            } else {
-                List<ExamRoomInfo> examRoomInfos = subjectExamRoomInfoMap.get(subjectType);
-                if (CollectionUtils.isEmpty(examRoomInfos)) {
-                    examRoomInfos = new ArrayList<>();
-                    examRoomInfos.add(examRoomInfo);
-                    subjectExamRoomInfoMap.put(subjectType, examRoomInfos);
-                } else {
-                    examRoomInfos.add(examRoomInfo);
-                }
-            }
-        }
-
-        if (Constants.isGui) {
-            addInfo("[%s]读取完毕，数据记录数：%s".formatted(fileStreamDto.getOriginalFilename(), examRoomInfoInfoList.size()));
-            addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
-        }
-
-        return key;
     }
 
     public void addInfo(String s) {

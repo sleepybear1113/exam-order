@@ -27,6 +27,7 @@ import java.util.*;
  * @date 2022/09/06 09:20
  */
 @RestController
+@RequestMapping(value = Constants.PREFIX)
 public class IndexController {
 
     @RequestMapping("/processPersonByGroup")
@@ -62,7 +63,6 @@ public class IndexController {
         AllExamInfo res = new AllExamInfo();
         res.setId(allExamInfo.getId());
         res.setList(allExamInfo.getList());
-//        res.setList(res.getList().subList(0,2));
         res.setRooms(Room.build(res.getList()));
         res.setPersons(Room.getSortedPersons(res.getRooms()));
 

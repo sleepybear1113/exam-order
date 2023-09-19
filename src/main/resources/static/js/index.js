@@ -7,12 +7,18 @@ let app = new Vue({
         infoFontSize: 16,
         picHost: "",
         random: 0,
-        emptyPng: "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+        emptyPng: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
         advance: false,
         tab: "核对单列表",
         examTime: "",
         ticketImgWidth: 120,
         ticketRow: 0,
+        dataId: {
+            personInfoKey: "",
+            personInfoKeyFilename: "",
+            placeSubjectRoomInfoKey: "",
+            placeSubjectRoomInfoKeyFilename: "",
+        },
         ticketSingleTd: {
             border: "1px solid black",
             padding: "8px",
@@ -70,12 +76,17 @@ let app = new Vue({
         this.picHost = window.location.origin;
     },
     methods: {
+        uploadStu() {
+            this.uploadExcel("stu", 1);
+        },
+        uploadRoom() {
+            this.uploadExcel("room", 2);
+        },
         uploadExcel(inputId, type) {
             let url = "/upload/file";
             let input = document.getElementById(inputId);
             const file = input.files[0];
             if (!file) {
-                alert("请选择文件");
                 return;
             }
             const formData = new FormData();
@@ -83,22 +94,61 @@ let app = new Vue({
             formData.append("deleteAfterUpload", true);
             formData.append("expireTimeMinutes", 60);
 
-            this.clear(true);
-            this.fileUploading = true;
-            this.exportKey = "";
-
             axios.post(url, formData, {
                 'Content-type': 'multipart/form-data'
             }).then(res => {
                 let uploadFileInfoDto = new UploadFileInfoDto(res.data.result);
+                if (!uploadFileInfoDto) {
+                    alert("上传失败！");
+                    return;
+                }
 
+                if (type === 1) {
+                    this.dataId.personInfoKey = uploadFileInfoDto.fileStreamDtoId;
+                    this.dataId.personInfoKeyFilename = uploadFileInfoDto.filename;
+                    this.processStu(uploadFileInfoDto.fileStreamDtoId);
+                } else if (type === 2) {
+                    this.dataId.placeSubjectRoomInfoKey = uploadFileInfoDto.fileStreamDtoId;
+                    this.dataId.placeSubjectRoomInfoKeyFilename = uploadFileInfoDto.filename;
+                    this.processRoom(uploadFileInfoDto.fileStreamDtoId);
+                }
             }).catch(err => {
                 // 出现错误时的处理
                 alert("上传失败，请选择其他文件");
-                this.fileUploading = false;
             });
         },
-
+        processStu(fileStreamDtoId) {
+            let url = "/process/process";
+            axios.get(url, {
+                params: {
+                    fileStreamDtoId: fileStreamDtoId,
+                    type: 1,
+                }
+            }).then((res) => {
+                let key = res.data.result;
+                if (!key) {
+                    alert("???");
+                    return;
+                }
+                this.dataId.personInfoKey = key;
+            });
+        },
+        processRoom(fileStreamDtoId) {
+            let url = "/process/process";
+            axios.get(url, {
+                params: {
+                    fileStreamDtoId: fileStreamDtoId,
+                    type: 2,
+                }
+            }).then((res) => {
+                let key = res.data.result;
+                if (!key) {
+                    alert("???");
+                    return;
+                }
+                this.dataId.placeSubjectRoomInfoKey = key;
+            });
+        },
         adjustImgSize() {
             this.imgHeight = this.imgWidth * 1.3;
         },
@@ -115,14 +165,16 @@ let app = new Vue({
         },
         processPic(random) {
             this.random = random;
-            let url = "processPersonByGroup";
+            let url = "/processPersonByGroup";
             axios.get(url, {
                 params: {
                     random: this.random,
+                    personInfoKey: this.dataId.personInfoKey,
+                    placeSubjectRoomInfoKey: this.dataId.placeSubjectRoomInfoKey,
                 }
             }).then((res) => {
                 this.changeTab("核对单列表(带照片)");
-                this.allExamInfo = new AllExamInfo(res.data);
+                this.allExamInfo = new AllExamInfo(res.data.result);
             });
         },
         addPrefixZero(num, n) {
@@ -157,7 +209,7 @@ let app = new Vue({
         getVersion() {
             let url = "getVersion";
             axios.get(url).then((res) => {
-                version = res.data;
+                version = res.data.result;
             });
         },
         getPersonOriginSchool() {

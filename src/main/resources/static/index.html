@@ -5,8 +5,9 @@
     <title>核对单</title>
     <script src="js/lib/vue.js"></script>
     <script src="js/lib/axios.min.js"></script>
-    <script src="js/utils/util.js?version=1.4.3.2"></script>
-    <script src="js/classes.js?version=1.4.3.2"></script>
+    <script src="js/lib/axios-config.js"></script>
+    <script src="js/utils/util.js?version=1.5.0"></script>
+    <script src="js/classes.js?version=1.5.0"></script>
 </head>
 <style>
     .info {
@@ -116,13 +117,13 @@
                         <h4>考试信息文件上传</h4>
                         <label>
                             请选择考生信息Excel文件
-                            <input type="file">
+                            <input type="file" id="stu" v-on:change="uploadStu()" accept=".xls,.xlsx,">
                         </label>
                         <button v-on:click="">考生信息Excel模板下载</button>
                         <br/>
                         <label>
                             请选择考场安排Excel文件
-                            <input type="file">
+                            <input type="file" id="room" v-on:change="uploadRoom()" accept=".xls,.xlsx,">
                         </label>
                         <button v-on:click="">考场安排Excel模板下载</button>
                         <br/>
@@ -304,7 +305,8 @@
 
                             <!--最后一行补充空白-->
                             <template v-if="(row * tableConfig.table1.colCount) > room.persons.length">
-                                <template v-for="row in (tableConfig.table1.colCount - room.persons.length % tableConfig.table1.colCount)">
+                                <template
+                                        v-for="row in (tableConfig.table1.colCount - room.persons.length % tableConfig.table1.colCount)">
                                     <!--空白行-->
                                     <td>
                                         <img :src="emptyPng" alt=" " :width="imgWidth + 'px'"
@@ -550,17 +552,21 @@
                 <br>
                 <label>
                     备注：
-                    <textarea v-model="tableConfig.table4.ticketSingleMsg" style="width: 500px; height: 150px" placeholder="在此处可以输入相关文字备注，将显示在准考证下方作为备注栏"></textarea>
+                    <textarea v-model="tableConfig.table4.ticketSingleMsg" style="width: 500px; height: 150px"
+                              placeholder="在此处可以输入相关文字备注，将显示在准考证下方作为备注栏"></textarea>
                 </label>
                 <br>
-                <button @click="changeTicketPicShow()">显示/隐藏照片(已{{toShowHideStr(tableConfig.table4.showTicketSinglePic)}})
+                <button @click="changeTicketPicShow()">
+                    显示/隐藏照片(已{{toShowHideStr(tableConfig.table4.showTicketSinglePic)}})
                 </button>
                 <hr>
                 <div style="flex-wrap: wrap">
-                    <span>{{tableConfig.table4.specificExamPlaceName? tableConfig.table4.specificExamPlaceName: "全部学校"}}</span>
+                    <span>{{tableConfig.table4.specificExamPlaceName ? tableConfig.table4.specificExamPlaceName : "全部学校"}}</span>
                     <br>
                     <button @click="tableConfig.table4.specificExamPlaceName = ''">全部</button>
-                    <button v-for="name in getPersonOriginSchool()" @click="tableConfig.table4.specificExamPlaceName = name">{{name}}</button>
+                    <button v-for="name in getPersonOriginSchool()"
+                            @click="tableConfig.table4.specificExamPlaceName = name">{{name}}
+                    </button>
                 </div>
             </div>
             <!--单个科目，遍历下属的每个试场-->
@@ -594,10 +600,12 @@
                         <td :style="ticketSingleTd" colspan="1">性别：{{person.sex}}</td>
                     </tr>
                     <tr class="ticket-single-main">
-                        <td v-if="person.examPlaceName !=null && person.examPlaceName.length > 0" :style="ticketSingleTd" colspan="1">
+                        <td v-if="person.examPlaceName !=null && person.examPlaceName.length > 0"
+                            :style="ticketSingleTd" colspan="1">
                             考点：{{person.examPlaceName}}
                         </td>
-                        <td v-if="person.originExamPlaceName !=null && person.originExamPlaceName.length > 0" :style="ticketSingleTd" colspan="2">
+                        <td v-if="person.originExamPlaceName !=null && person.originExamPlaceName.length > 0"
+                            :style="ticketSingleTd" colspan="2">
                             所属学校：{{person.originExamPlaceName}}
                         </td>
                     </tr>
@@ -627,13 +635,14 @@
                         </td>
                     </tr>
                 </table>
-                <div v-if="!tableConfig.table4.specificExamPlaceName || tableConfig.table4.specificExamPlaceName === person.originExamPlaceName" style="page-break-after:always;"></div>
+                <div v-if="!tableConfig.table4.specificExamPlaceName || tableConfig.table4.specificExamPlaceName === person.originExamPlaceName"
+                     style="page-break-after:always;"></div>
             </template>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    document.write("<script src='js/index.js?version=" + Math.random() + "'><\/script>");
+    document.write("<script src='js/index.js?version=index.js." + Math.ceil(Math.random() * 100000) + "'><\/script>");
 </script>
 </body>
 </html>
