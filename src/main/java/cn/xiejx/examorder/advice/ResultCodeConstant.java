@@ -14,7 +14,7 @@ public class ResultCodeConstant {
          */
         SUCCESS(0),
         /**
-         * 抛出 {@link cn.sleepybear.fileconvert.exception.FrontException} 时候的返回值
+         * 抛出 {@link cn.xiejx.examorder.exception.FrontException} 时候的返回值
          */
         COMMON_ERROR(-1),
         /**

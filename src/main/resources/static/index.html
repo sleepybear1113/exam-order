@@ -129,7 +129,7 @@
                         <br/>
                         <label>
                             请输入考生照片链接地址
-                            <input>
+                            <input v-model="picUrlPrefix">
                         </label>
                         <br/>
                         <button v-on:click="">链接生成工具下载</button>
@@ -289,7 +289,7 @@
                             <template
                                     v-for="(person, col) in room.persons.slice((row - 1) * tableConfig.table1.colCount, row * tableConfig.table1.colCount)">
                                 <td>
-                                    <img :src="picHost + person.picSrc" alt="" :width="imgWidth + 'px'"
+                                    <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt="" :width="imgWidth + 'px'"
                                          :height="imgHeight + 'px'"
                                          style="margin-right: 40px; margin-bottom: 0; margin-top: 12px;">
                                     <p v-if="tableConfig.table1.showExamNumber" class="info">{{person.examNumber}}</p>
@@ -498,7 +498,7 @@
 
                                 <div style="margin-right: 20px; width: 535px; float: left">
                                     <div style="float: right">
-                                        <img :src="picHost + person.picSrc" alt=""
+                                        <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
                                              :width="ticketImgWidth + 'px'"
                                              :height="ticketImgWidth * 1.4 + 'px'" style="margin-right: 40px;">
                                     </div>
@@ -585,7 +585,7 @@
                         <td :style="ticketSingleTd" rowspan="3" v-if="tableConfig.table4.showTicketSinglePic">
                             <template>
                                 <div class="rrr">
-                                    <img :src="picHost + person.picSrc" alt=""
+                                    <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
                                          :width="ticketImgWidth * 1.5 + 'px'"
                                          :height="ticketImgWidth * 1.5 + 'px'">
                                 </div>

@@ -13,6 +13,7 @@ let app = new Vue({
         examTime: "",
         ticketImgWidth: 120,
         ticketRow: 0,
+        picUrlPrefix: null,
         dataId: {
             personInfoKey: "",
             personInfoKeyFilename: "",
@@ -116,6 +117,19 @@ let app = new Vue({
                 // 出现错误时的处理
                 alert("上传失败，请选择其他文件");
             });
+        },
+        buildPicSrc(urlPrefix, idCard, examNumber) {
+            let arr = [];
+            if (idCard) {
+                arr.push(idCard);
+            }
+            if (examNumber) {
+                arr.push(examNumber);
+            }
+            if (arr.length === 0 || !urlPrefix || !urlPrefix.startsWith("http")) {
+                return "/empty-photo.png";
+            }
+            return urlPrefix + (urlPrefix.endsWith("/") ? "" : "/") + "getPic?filenameNoEx=" + arr.join("***");
         },
         processStu(fileStreamDtoId) {
             let url = "/process/process";
