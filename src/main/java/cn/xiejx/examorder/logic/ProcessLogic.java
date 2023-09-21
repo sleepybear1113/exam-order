@@ -1,10 +1,7 @@
 package cn.xiejx.examorder.logic;
 
 import cn.xiejx.examorder.constants.Constants;
-import cn.xiejx.examorder.entity.ExamRoomInfo;
-import cn.xiejx.examorder.entity.FileStreamDto;
-import cn.xiejx.examorder.entity.PersonInfo;
-import cn.xiejx.examorder.entity.ReadPersonInfo;
+import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.excel.Read;
 import cn.xiejx.examorder.utils.Util;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,7 +41,7 @@ public class ProcessLogic {
 
         String key = Util.getRandomStr(8);
         HashMap<String, Map<String, List<ExamRoomInfo>>> map = new HashMap<>();
-        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, map);
+        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, ReadRoomInfo.buildFromMap(key, map));
 
         for (ExamRoomInfo examRoomInfo : examRoomInfoInfoList) {
             String examPlaceId = examRoomInfo.getExamPlaceId();

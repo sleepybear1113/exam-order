@@ -41,11 +41,12 @@ public class IndexController {
         String key = Util.getRandomStr(8);
         allExamInfo.setId(key);
         ReadPersonInfo readPersonInfo = Constants.READ_PERSON_INFO_CACHER.get(personInfoKey);
-        Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
-        if (readPersonInfo == null || mapMap == null) {
+        ReadRoomInfo readRoomInfo = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
+        if (readPersonInfo == null || readRoomInfo == null) {
             return allExamInfo;
         }
 
+        Map<String, Map<String, List<ExamRoomInfo>>> mapMap = readRoomInfo.getMapMap();
         if (CollectionUtils.isEmpty(readPersonInfo.getPersonInfoList())) {
             return allExamInfo;
         }
@@ -73,7 +74,8 @@ public class IndexController {
     @RequestMapping("/getSubjectInfoMaxCountList")
     public List<ExamRoomInfo> getSubjectInfoMaxCountList() {
         List<ExamRoomInfo> res = new ArrayList<>();
-        for (Map<String, List<ExamRoomInfo>> map : Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey).values()) {
+        ReadRoomInfo readRoomInfo = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey);
+        for (Map<String, List<ExamRoomInfo>> map : readRoomInfo.getMapMap().values()) {
             for (List<ExamRoomInfo> list : map.values()) {
                 res.addAll(list);
             }
@@ -91,7 +93,8 @@ public class IndexController {
         for (ExamRoomInfo examRoomInfo : list) {
             String examPlaceId = examRoomInfo.getExamPlaceId();
             String subjectType = examRoomInfo.getSubjectType();
-            Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey);
+            ReadRoomInfo readRoomInfo = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey);
+            Map<String, Map<String, List<ExamRoomInfo>>> mapMap = readRoomInfo.getMapMap();
             Map<String, List<ExamRoomInfo>> map = mapMap.get(examPlaceId);
             if (MapUtils.isEmpty(map)) {
                 if (mapMap.size() != 1) {

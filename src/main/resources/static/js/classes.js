@@ -100,3 +100,20 @@ class Room {
         this.persons = props.persons.map(item => new PersonInfo(item));
     }
 }
+
+class ReadPersonInfo {
+    constructor(props = {}) {
+        this.key = props.key;
+        this.validList = props.validList ? props.validList.map(item => item) : [];
+    }
+}
+
+class ReadRoomInfo {
+    constructor(props = {}) {
+        this.key = props.key;
+        this.lines = props.lines;
+        this.examPlaceCount = props.examPlaceCount;
+        this.examSubjectCount = props.examSubjectCount;
+        this.examRoomCount = props.examRoomCount;
+    }
+}

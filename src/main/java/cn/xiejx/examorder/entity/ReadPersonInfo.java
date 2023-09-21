@@ -19,4 +19,14 @@ public class ReadPersonInfo implements Serializable {
     private String key;
     private List<PersonInfo> personInfoList;
     private List<String> validList;
+
+    public ReadPersonInfo copy(boolean copyPersonInfoList) {
+        ReadPersonInfo readPersonInfo = new ReadPersonInfo();
+        readPersonInfo.setKey(this.key);
+        if (copyPersonInfoList) {
+            readPersonInfo.setPersonInfoList(this.personInfoList);
+        }
+        readPersonInfo.setValidList(this.validList);
+        return readPersonInfo;
+    }
 }

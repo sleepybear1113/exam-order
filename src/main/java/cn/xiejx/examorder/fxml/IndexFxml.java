@@ -2,10 +2,7 @@ package cn.xiejx.examorder.fxml;
 
 import cn.xiejx.examorder.config.AppProperties;
 import cn.xiejx.examorder.constants.Constants;
-import cn.xiejx.examorder.entity.ExamRoomInfo;
-import cn.xiejx.examorder.entity.FileStreamDto;
-import cn.xiejx.examorder.entity.PersonInfo;
-import cn.xiejx.examorder.entity.ReadPersonInfo;
+import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.logic.ProcessLogic;
 import cn.xiejx.examorder.utils.SpringContextUtil;
 import javafx.application.Platform;
@@ -69,7 +66,7 @@ public class IndexFxml {
             return;
         }
 
-        if (MapUtils.isEmpty(Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey))) {
+        if (MapUtils.isEmpty(Constants.EXAM_ROOM_INFO_MAP_CACHER.get(IndexFxml.placeSubjectRoomInfoKey).getMapMap())) {
             addInfo("没有有效的考场场次数据！请重新选择Excel文件！");
             return;
         }
@@ -213,27 +210,15 @@ public class IndexFxml {
                     return;
                 }
 
-                Map<String, Map<String, List<ExamRoomInfo>>> mapMap = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
+                ReadRoomInfo readRoomInfo = Constants.EXAM_ROOM_INFO_MAP_CACHER.get(placeSubjectRoomInfoKey);
+                Map<String, Map<String, List<ExamRoomInfo>>> mapMap = readRoomInfo.getMapMap();
                 if (MapUtils.isEmpty(mapMap)) {
                     addInfo("没有试场信息，请检测模板填写是否正确");
                     return;
                 }
 
-                int totalRoomCount = 0;
-                Set<String> placeIdSet = new HashSet<>();
-                Set<String> subjectTypeSet = new HashSet<>();
-                for (Map<String, List<ExamRoomInfo>> map : mapMap.values()) {
-                    for (List<ExamRoomInfo> examRoomInfos : map.values()) {
-                        for (ExamRoomInfo examRoomInfo : examRoomInfos) {
-                            totalRoomCount += examRoomInfo.getRoomCount();
-                            placeIdSet.add(examRoomInfo.getExamPlaceId());
-                            subjectTypeSet.add(examRoomInfo.getSubjectType());
-                        }
-                    }
-                }
-
-                addInfo("[%s]读取完毕，数据记录数：%s".formatted(fileStreamDto.getOriginalFilename(), mapMap.size()));
-                addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(placeIdSet.size(), subjectTypeSet.size(), totalRoomCount));
+                addInfo("[%s]读取完毕，数据记录数：%s".formatted(fileStreamDto.getOriginalFilename(), readRoomInfo.getLines()));
+                addInfo("[共计]考点数：%s, 类别数：%s, 试场总数：%s".formatted(readRoomInfo.getExamPlaceCount(), readRoomInfo.getExamSubjectCount(), readRoomInfo.getExamRoomCount()));
             };
         }
         new Thread(runnable).start();

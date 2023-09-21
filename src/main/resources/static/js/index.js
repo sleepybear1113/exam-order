@@ -140,11 +140,16 @@ let app = new Vue({
                 }
             }).then((res) => {
                 let key = res.data.result;
-                if (!key) {
-                    alert("???");
-                    return;
-                }
-                this.dataId.personInfoKey = key;
+
+                axios.get("/data/getReadPersonInfo", {
+                    params: {
+                        personInfoKey: key,
+                    }
+                }).then((res) => {
+                    let readPersonInfo = new ReadPersonInfo(res.data.result);
+                    console.log(key);
+                    this.dataId.personInfoKey = readPersonInfo.key;
+                });
             });
         },
         processRoom(fileStreamDtoId) {
@@ -156,11 +161,18 @@ let app = new Vue({
                 }
             }).then((res) => {
                 let key = res.data.result;
-                if (!key) {
-                    alert("???");
-                    return;
-                }
-                this.dataId.placeSubjectRoomInfoKey = key;
+                axios.get("/data/getReadRoomInfo", {
+                    params: {
+                        placeSubjectRoomInfoKey: key,
+                    }
+                }).then((res) => {
+                    let readRoomInfo = new ReadRoomInfo(res.data.result);
+                    if (!key) {
+                        alert("???");
+                        return;
+                    }
+                    this.dataId.placeSubjectRoomInfoKey = readRoomInfo.key;
+                });
             });
         },
         adjustImgSize() {

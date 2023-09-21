@@ -499,7 +499,6 @@
                                 <div style="margin-right: 20px; width: 535px; float: left">
                                     <div style="float: right">
                                         <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
-                                             :width="ticketImgWidth + 'px'"
                                              :height="ticketImgWidth * 1.4 + 'px'" style="margin-right: 40px;">
                                     </div>
                                     <div style="margin-right: 20px">
@@ -582,12 +581,11 @@
                     </tr>
                     <tr class="ticket-single-main">
                         <td :style="ticketSingleTd" colspan="2">考生号：{{person.examNumber}}</td>
-                        <td :style="ticketSingleTd" rowspan="3" v-if="tableConfig.table4.showTicketSinglePic">
+                        <td :style="ticketSingleTd" rowspan="4" v-if="tableConfig.table4.showTicketSinglePic">
                             <template>
                                 <div class="rrr">
                                     <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
-                                         :width="ticketImgWidth * 1.5 + 'px'"
-                                         :height="ticketImgWidth * 1.5 + 'px'">
+                                         :height="ticketImgWidth * 1.7 + 'px'">
                                 </div>
                             </template>
                         </td>
@@ -601,7 +599,7 @@
                     </tr>
                     <tr class="ticket-single-main">
                         <td v-if="person.examPlaceName !=null && person.examPlaceName.length > 0"
-                            :style="ticketSingleTd" colspan="1">
+                            :style="ticketSingleTd" colspan="2">
                             考点：{{person.examPlaceName}}
                         </td>
                         <td v-if="person.originExamPlaceName !=null && person.originExamPlaceName.length > 0"
@@ -636,7 +634,7 @@
                     </tr>
                 </table>
                 <div v-if="!tableConfig.table4.specificExamPlaceName || tableConfig.table4.specificExamPlaceName === person.originExamPlaceName"
-                     style="page-break-after:always;"></div>
+                     style="break-after: page;"></div>
             </template>
         </div>
     </div>
