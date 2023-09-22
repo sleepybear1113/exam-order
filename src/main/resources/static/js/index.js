@@ -147,8 +147,14 @@ let app = new Vue({
                     }
                 }).then((res) => {
                     let readPersonInfo = new ReadPersonInfo(res.data.result);
-                    console.log(key);
-                    this.dataId.personInfoKey = readPersonInfo.key;
+                    console.log(readPersonInfo);
+                    if (readPersonInfo.validList) {
+                        if (readPersonInfo.validList[0] === "true") {
+                            this.dataId.personInfoKey = readPersonInfo.key;
+                        } else {
+                            alert("上传的文件有信息错误！" + readPersonInfo.validList.join("\n"));
+                        }
+                    }
                 });
             });
         },
@@ -167,10 +173,11 @@ let app = new Vue({
                     }
                 }).then((res) => {
                     let readRoomInfo = new ReadRoomInfo(res.data.result);
-                    if (!key) {
+                    if (!readRoomInfo) {
                         alert("???");
                         return;
                     }
+                    console.log(readRoomInfo);
                     this.dataId.placeSubjectRoomInfoKey = readRoomInfo.key;
                 });
             });

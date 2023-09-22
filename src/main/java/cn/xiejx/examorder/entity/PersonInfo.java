@@ -206,7 +206,7 @@ public class PersonInfo {
                 msg.append("没有类别代码；");
             }
             if (!msg.isEmpty()) {
-                res.add("第%s条数据：%s".formatted(i, msg.toString()));
+                res.add("第%s条数据：%s".formatted(i + 1, msg.toString()));
             }
         }
         return res;
