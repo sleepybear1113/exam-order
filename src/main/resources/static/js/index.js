@@ -16,15 +16,18 @@ let app = new Vue({
         picUrlPrefix: null,
         dataId: {
             personInfoKey: "",
+            personInfoId: null,
             personInfoKeyFilename: "",
+
+            placeSubjectRoomInfoId: null,
             placeSubjectRoomInfoKey: "",
             placeSubjectRoomInfoKeyFilename: "",
         },
         ticketSingleTd: {
             border: "1px solid black",
             padding: "8px",
-            "min-width": "250px",
-            "max-width": "600px",
+            "min-width": "200px",
+            "max-width": "500px",
         },
         tableConfig: {
             table1: {
@@ -77,6 +80,32 @@ let app = new Vue({
         this.picHost = window.location.origin;
     },
     methods: {
+        createInputUpload(inputId) {
+            let parentDiv = document.getElementById("div-" + inputId);
+
+            while (parentDiv.firstChild) {
+                parentDiv.removeChild(parentDiv.firstChild);
+            }
+
+            let inputElement = document.createElement("input");
+
+            let id = "input-" + inputId + "-" + parseInt(Math.random() * 100000);
+
+            inputElement.setAttribute("type", "file");
+            inputElement.setAttribute("id", id);
+            inputElement.setAttribute("accept", ".xls,.xlsx");
+
+            if (inputId === "stu") {
+                inputElement.addEventListener("change", this.uploadStu);
+                this.dataId.personInfoId = id;
+            } else if (inputId === "room") {
+                inputElement.addEventListener("change", this.uploadRoom);
+                this.dataId.placeSubjectRoomInfoId = id;
+            }
+
+            parentDiv.appendChild(inputElement);
+            inputElement.click();
+        },
         uploadStu() {
             this.uploadExcel("stu", 1);
         },
@@ -85,10 +114,22 @@ let app = new Vue({
         },
         uploadExcel(inputId, type) {
             let url = "/upload/file";
-            let input = document.getElementById(inputId);
+            let elementId = "";
+            if (type === 1) {
+                elementId = this.dataId.personInfoId;
+            } else if (type === 2) {
+                elementId = this.dataId.placeSubjectRoomInfoId;
+            }
+
+            let input = document.getElementById(elementId);
             const file = input.files[0];
             if (!file) {
                 return;
+            }
+            if (type === 1) {
+                this.dataId.personInfoKeyFilename = file.name;
+            } else if (type === 2) {
+                this.dataId.placeSubjectRoomInfoKeyFilename = file.name;
             }
             const formData = new FormData();
             formData.append("file", file);
@@ -231,7 +272,8 @@ let app = new Vue({
         },
         changeTicketPicShow() {
             this.tableConfig.table4.showTicketSinglePic = !this.tableConfig.table4.showTicketSinglePic;
-            this.ticketSingleTd["min-width"] = this.tableConfig.table4.showTicketSinglePic ? "250px" : "330px";
+            this.ticketSingleTd["min-width"] = this.tableConfig.table4.showTicketSinglePic ? "200px" : "310px";
+            this.ticketSingleTd["max-width"] = this.tableConfig.table4.showTicketSinglePic ? "200px" : "310px";
         },
         displayTicketSingleMsg() {
             return this.tableConfig.table4.ticketSingleMsg.split("\n");

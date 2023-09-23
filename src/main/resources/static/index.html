@@ -26,6 +26,12 @@
         width: 50px;
     }
 
+    table {
+        margin: 0 auto;
+        max-width: 650px;
+        min-width: 600px;
+    }
+
     #tables4 table {
         border-collapse: collapse;
     }
@@ -37,7 +43,7 @@
         font-size: 20px;
         font-family: 宋体, serif;
         height: 27px;
-        min-width: 100px;
+        min-width: 50px;
     }
 
     #tables5 table {
@@ -115,25 +121,34 @@
                 <div>
                     <div>
                         <h4>考试信息文件上传</h4>
+                        <button @click="createInputUpload('stu')">上传考生信息Excel文件</button>
                         <label>
-                            请选择考生信息Excel文件
-                            <input type="file" id="stu" v-on:change="uploadStu()" accept=".xls,.xlsx,">
+                            <input placeholder="未选择文件" v-model="dataId.personInfoKeyFilename" disabled>
                         </label>
-                        <button v-on:click="">考生信息Excel模板下载</button>
+
                         <br/>
+
+                        <button @click="createInputUpload('room')">上传考场安排Excel文件</button>
                         <label>
-                            请选择考场安排Excel文件
-                            <input type="file" id="room" v-on:change="uploadRoom()" accept=".xls,.xlsx,">
+                            <input placeholder="未选择文件" v-model="dataId.placeSubjectRoomInfoKeyFilename" disabled>
                         </label>
-                        <button v-on:click="">考场安排Excel模板下载</button>
+
                         <br/>
                         <label>
                             请输入考生照片链接地址
                             <input v-model="picUrlPrefix">
                         </label>
-                        <br/>
-                        <button v-on:click="">链接生成工具下载</button>
                         <button v-on:click="">工具使用说明</button>
+
+                        <br/>
+                        <div style="display: none">
+                            <div id="div-stu"></div>
+                            <div id="div-room"></div>
+                        </div>
+                        <br/>
+                        <button v-on:click="">考生信息Excel模板下载</button>
+                        <button v-on:click="">考场安排Excel模板下载</button>
+                        <button v-on:click="">链接生成工具下载</button>
                         <hr>
                     </div>
                     <div>
@@ -402,7 +417,7 @@
                             <td v-if="tableConfig.table2.showIdCard">{{person.idCard}}</td>
                             <td v-if="tableConfig.table2.showSex">{{person.sex}}</td>
                             <td v-if="tableConfig.table2.showSeatNo">{{person.seatNo}}</td>
-                            <td v-if="tableConfig.table2.showSign" style="min-width: 150px"></td>
+                            <td v-if="tableConfig.table2.showSign" style="min-width: 100px"></td>
                         </tr>
                     </template>
                     </tbody>
@@ -638,6 +653,7 @@
             </template>
         </div>
     </div>
+
 </div>
 <script type="text/javascript">
     document.write("<script src='js/index.js?version=index.js." + Math.ceil(Math.random() * 100000) + "'><\/script>");
