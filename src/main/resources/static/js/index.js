@@ -238,6 +238,14 @@ let app = new Vue({
             this.tab = tab;
         },
         processPic(random) {
+            if (!this.dataId.personInfoId) {
+                alert("请先上传学生信息文件");
+                return;
+            }
+            if (!this.dataId.placeSubjectRoomInfoId) {
+                alert("请先上传考场信息文件");
+                return;
+            }
             this.random = random;
             let url = "/processPersonByGroup";
             axios.get(url, {
