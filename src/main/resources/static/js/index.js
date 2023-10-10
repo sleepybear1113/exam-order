@@ -193,6 +193,7 @@ let app = new Vue({
                         if (readPersonInfo.validList[0] === "true") {
                             this.dataId.personInfoKey = readPersonInfo.key;
                         } else {
+                            this.dataId.personInfoKeyFilename = "";
                             alert("上传的文件有信息错误！" + readPersonInfo.validList.join("\n"));
                         }
                     }
@@ -320,6 +321,14 @@ let app = new Vue({
             }
 
             return uniqueArr;
-        }
+        },
+        downloadUrl(url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
     },
 });

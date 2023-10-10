@@ -117,7 +117,7 @@
         <h1>嘉兴市职业技能操作考试试场编排系统</h1>
         <div style="display: flex">
 
-            <div style="float: left; margin-left: 5px; border-right: black solid 1px">
+            <div style="float: left; margin-left: 5px; margin-right: 30px; border-right: black solid 1px">
                 <div>
                     <div>
                         <h4>考试信息文件上传</h4>
@@ -134,11 +134,13 @@
                         </label>
 
                         <br/>
+                        <br/>
                         <label>
                             请输入考生照片链接地址
-                            <input v-model="picUrlPrefix">
+                            <input v-model="picUrlPrefix" placeholder="请输入链接生成工具的链接">
                         </label>
-                        <button v-on:click="">工具使用说明</button>
+                        <br>
+                        <a>工具使用方式可以查看“使用说明”最下面。</a>
 
                         <br/>
                         <div style="display: none">
@@ -146,18 +148,29 @@
                             <div id="div-room"></div>
                         </div>
                         <br/>
-                        <button v-on:click="">考生信息Excel模板下载</button>
-                        <button v-on:click="">考场安排Excel模板下载</button>
-                        <button v-on:click="">链接生成工具下载</button>
+                        <button v-on:click="downloadUrl('files/考生信息Excel模板.xlsx')">考生信息Excel模板下载</button>
+                        <button v-on:click="downloadUrl('files/试场场次Excel模板.xlsx')">考场安排Excel模板下载</button>
+                        <button v-on:click="downloadUrl('files/图片链接生成工具v1.0.zip')">链接生成工具下载</button>
                         <hr>
                     </div>
-                    <div>
-                        <h4>表单功能</h4>
+
+                    <div style="margin-top: 30px">
+                        <br/>
+                        <a href="intro.html" target="_blank">>>>点击此处查看使用说明<<<</a>
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <h4>表单功能</h4>
+                    <div v-if="false">
                         <label>
                             图片大小
                             <input v-on:change="adjustImgSize()" v-on:input="adjustImgSize()" v-model="imgWidth"
-                                   type="number"
-                                   class="number-input">
+                                   type="number" class="number-input">
                         </label>
                         <br/>
                         <div>
@@ -167,27 +180,29 @@
                         </div>
                         <label>若图片数量较多，调整上述参数时会有卡顿。</label>
                         <br/>
-                        <button v-on:click="processPic(0)">顺序生成</button>
-                        <button v-on:click="processPic(Math.ceil(Math.random() * 10000000000))">随机生成</button>
-                        <button v-on:click="advanceChange()">高级设置</button>
-                        <br/>
+                    </div>
+
+                    <button v-on:click="processPic(0)">顺序生成</button>
+                    <button v-on:click="processPic(Math.ceil(Math.random() * 10000000000))">随机生成</button>
+                    <button v-on:click="advanceChange()">高级设置</button>
+                    <br/>
+                    <p>
+                        <button v-on:click="exportExcel()">导出安排Excel表</button>
+                    </p>
+                    <div v-show="advance">
+                        <hr>
                         <p>
-                            <button v-on:click="exportExcel()">导出Excel</button>
+                            <button v-on:click="processPic(random)">使用右侧随机数生成</button>
+                            <label>
+                                <input type="number" v-model="random">
+                            </label>
                         </p>
-                        <div v-show="advance">
-                            <hr>
-                            <p>
-                                <button v-on:click="processPic(random)">使用右侧随机数生成</button>
-                                <label>
-                                    <input type="number" v-model="random">
-                                </label>
-                            </p>
-                            <p>
-                                <label>两次的随机数若一致，那么生成的顺序也是一致的。</label>
-                            </p>
-                        </div>
+                        <p>
+                            <label>两次的随机数若一致，那么生成的顺序也是一致的。</label>
+                        </p>
                     </div>
                 </div>
+
                 <hr>
 
                 <p>
@@ -199,10 +214,9 @@
                 <hr>
 
                 <button onclick="window.print()">打印(Ctrl+P)/保存</button>
-
             </div>
 
-            <div style="width: 550px;">
+            <div style="width: 550px;" v-if="false">
                 <h3>打印页面使用说明</h3>
                 <p>
                     本页面是在选择完毕考生信息Excel文件和照片后，进行的设置。若没有选择照片，那么将无法显示照片。

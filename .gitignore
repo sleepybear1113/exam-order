@@ -33,6 +33,5 @@ build/
 .vscode/
 
 test/
-src/main/resources/static/img/
 /*.json
 ~$*
