@@ -168,7 +168,7 @@ let app = new Vue({
                 arr.push(examNumber);
             }
             if (arr.length === 0 || !urlPrefix || !urlPrefix.startsWith("http")) {
-                return "/empty-photo.png";
+                return "/exam-order/empty-photo.png";
             }
             return urlPrefix + (urlPrefix.endsWith("/") ? "" : "/") + "getPic?filenameNoEx=" + arr.join("***");
         },

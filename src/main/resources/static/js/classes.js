@@ -4,7 +4,7 @@ class PersonInfo {
             return;
         }
 
-        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "/empty-photo.png" : (props.picSrc.startsWith("/") ? props.picSrc : "/" + props.picSrc);
+        this.picSrc = (props.picSrc == null || props.picSrc === "") ? "/exam-order/empty-photo.png" : (props.picSrc.startsWith("/") ? props.picSrc : "/" + props.picSrc);
         this.id = props.id;
         this.name = props.name;
         this.sex = props.sex;
