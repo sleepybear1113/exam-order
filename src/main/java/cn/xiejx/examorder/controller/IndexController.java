@@ -6,10 +6,6 @@ import cn.xiejx.examorder.entity.*;
 import cn.xiejx.examorder.fxml.IndexFxml;
 import cn.xiejx.examorder.utils.SpringContextUtil;
 import cn.xiejx.examorder.utils.Util;
-import com.alibaba.excel.EasyExcel;
-import javafx.application.Platform;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * There is description
@@ -119,52 +117,6 @@ public class IndexController {
                 }
             }
         }
-
-        return true;
-    }
-
-    @RequestMapping("/exportExcel")
-    public Boolean exportExcel(String exportFileName, String key) {
-        AllExamInfo allExamInfo = Constants.ALL_EXAM_INFO_CACHER.get(key);
-        if (allExamInfo == null) {
-            return false;
-        }
-        List<ExamPlaceInfo> list = allExamInfo.getList();
-        if (CollectionUtils.isEmpty(list)) {
-            return false;
-        }
-        List<PersonInfo> data = new ArrayList<>();
-        for (ExamPlaceInfo examPlaceInfo : list) {
-            for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
-                if (CollectionUtils.isEmpty(examRoomInfo.getRoomList())) {
-                    continue;
-                }
-                for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
-                    data.addAll(roomInfo.getPersons());
-                }
-            }
-        }
-        if (CollectionUtils.isEmpty(data)) {
-            return false;
-        }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(StringUtils.isBlank(exportFileName) ? "核对单" : exportFileName);
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("xlsx", "*.xlsx")
-        );
-
-        Platform.runLater(() -> {
-            File file = fileChooser.showSaveDialog(new Stage());
-            if (file == null) {
-                return;
-            }
-            String absolutePath = file.getAbsolutePath();
-
-            EasyExcel.write(absolutePath, PersonInfo.class)
-                    .sheet("模板")
-                    .doWrite(() -> data);
-        });
 
         return true;
     }

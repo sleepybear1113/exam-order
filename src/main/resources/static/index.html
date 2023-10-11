@@ -2,12 +2,12 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>核对单</title>
+    <title>试场编排系统</title>
     <script src="js/lib/vue.js"></script>
     <script src="js/lib/axios.min.js"></script>
     <script src="js/lib/axios-config.js"></script>
-    <script src="js/utils/util.js?version=1.5.0"></script>
-    <script src="js/classes.js?version=1.5.0"></script>
+    <script src="js/utils/util.js?version=1.5.1"></script>
+    <script src="js/classes.js?version=1.5.1"></script>
 </head>
 <style>
     .info {
@@ -138,6 +138,7 @@
                         <label>
                             请输入考生照片链接地址
                             <input v-model="picUrlPrefix" placeholder="请输入链接生成工具的链接">
+                            (选填，用于显示照片)
                         </label>
                         <br>
                         <a>工具使用方式可以查看“使用说明”最下面。</a>

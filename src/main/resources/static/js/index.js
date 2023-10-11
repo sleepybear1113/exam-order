@@ -267,13 +267,17 @@ let app = new Vue({
             return addPrefixZero(num, n);
         },
         exportExcel() {
-            let url = "exportExcel";
+            let url = "/exportExcel";
             axios.get(url, {
                 params: {
-                    exportFileName: this.tableConfig.table1.title1,
                     key: this.allExamInfo.id,
                 }
             }).then((res) => {
+                let key = res.data.result;
+                if (!key) {
+                    return;
+                }
+                this.downloadUrl(axios.defaults.baseURL + "/download/downloadFile?key=" + key);
             });
         },
         log(data) {

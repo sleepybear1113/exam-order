@@ -9,9 +9,9 @@ axios.interceptors.response.use(
         } else {
             let message = res.message;
             if (code > -10) {
-                showAlertWarning(message);
+                alert(message);
             } else {
-                showAlertDanger(message, "系统错误");
+                alert("系统错误" + message);
             }
             // 直接拒绝往下面返回结果信息
             return Promise.reject(response);
@@ -21,12 +21,12 @@ axios.interceptors.response.use(
     (error) => {
         let response = error.response;
         if (response == null) {
-            showAlertDanger(`请求失败，请检查程序是否启动`);
+            alert(`请求失败，请检查程序是否启动`);
             return Promise.reject(error);
         }
         let status = response.status;
         let request = error.request;
-        showAlertDanger(`请求失败，status = ${status}\n url：${request.responseURL}`);
+        alert(`请求失败，status = ${status}\n url：${request.responseURL}`);
         return Promise.reject(error);
     }
 );

@@ -1,8 +1,8 @@
 package cn.xiejx.examorder.controller2;
 
 import cn.xiejx.examorder.constants.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
-import org.springframework.util.ResourceUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,33 +45,42 @@ public class DownloadController {
 //        }
 //    }
 //
-//    @GetMapping("/download/downloadResourceFile")
-//    public ResponseEntity<byte[]> downloadFile(String filename) {
-//        try {
-//            // 读取静态资源下的文件
-//            File file = ResourceUtils.getFile("classpath:static/" + filename);
-//            if (!file.exists()) {
-//                return generateErrorResponse("文件不存在");
-//            }
-//            byte[] content = StreamUtils.copyToByteArray(new FileInputStream(file));
-//            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-//                    .filename(URLEncoder.encode(filename, StandardCharsets.UTF_8))
-//                    .build();
-//            return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                    .contentLength(content.length)
-//                    .body(content);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return null;
-//    }
-//
-//    private ResponseEntity<byte[]> generateErrorResponse(String errorMessage) {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.TEXT_PLAIN);
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(errorMessage.getBytes(StandardCharsets.UTF_8));
-//    }
+    @GetMapping("/download/downloadFile")
+    public ResponseEntity<byte[]> downloadFile(String key) {
+        if (StringUtils.isEmpty(key)) {
+            return generateErrorResponse("key不能为空");
+        }
+        String path = Constants.FILE_EXPORT_CACHER.get(key);
+        if (StringUtils.isEmpty(path)) {
+            return generateErrorResponse("文件已过期或者不存在");
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            return generateErrorResponse("文件不存在");
+        }
+
+        try {
+            FileInputStream in = new FileInputStream(file);
+            byte[] content = StreamUtils.copyToByteArray(in);
+            in.close();
+            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(URLEncoder.encode(file.getName(), StandardCharsets.UTF_8))
+                    .build();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(content.length)
+                    .body(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private ResponseEntity<byte[]> generateErrorResponse(String errorMessage) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(errorMessage.getBytes(StandardCharsets.UTF_8));
+    }
 }
