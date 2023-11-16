@@ -47,8 +47,8 @@ public class Room implements Serializable {
                     room.setMaxCount(examRoomInfo.getMaxCount());
                     room.setRoomCountStr(examRoomInfo.getRoomCountStr());
                     room.setRoomCount(examRoomInfo.getRoomCount());
-                    room.setRoomName(roomInfo.getRoomName());
-                    room.setTime(roomInfo.getTime());
+                    room.setRoomName(examRoomInfo.getRoomName());
+                    room.setTime(examRoomInfo.getTime());
                     List<PersonInfo> persons = roomInfo.getPersons();
                     room.setPersons(persons);
                     rooms.add(room);

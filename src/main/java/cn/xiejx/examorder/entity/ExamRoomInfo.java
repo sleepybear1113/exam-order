@@ -211,6 +211,7 @@ public class ExamRoomInfo {
                 List<PersonInfo> personInfos = roomPersonMap.get(name);
                 if (CollectionUtils.isNotEmpty(personInfos)) {
                     roomInfo.getPersons().addAll(personInfos.subList(0, Math.min(personInfos.size(), maxCount)));
+                    roomInfo.getPersons().forEach(personInfo -> personInfo.setTime(roomInfo.getTime()));
                 }
             }
 
