@@ -219,7 +219,7 @@ public class ExamRoomInfo {
                 continue;
             }
 
-            // 把学生放入试场
+            // 如果有剩余未安排的学生，把学生放入试场
             for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
                 if (startIndex >= personInfoList.size()) {
                     break;

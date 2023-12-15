@@ -31,7 +31,7 @@ let app = new Vue({
         },
         tableConfig: {
             table1: {
-                title1: "嘉兴市职业技能操作考试试场核对单",
+                title1: "考试试场核对单",
                 title2: "",
                 colCount: 6,
                 showExamNumber: true,
@@ -41,7 +41,7 @@ let app = new Vue({
                 showSex: true,
             },
             table2: {
-                title1: "嘉兴市职业技能操作考试试场核对单",
+                title1: "考试试场核对单",
                 title2: "",
                 showExamNumber: true,
                 showNumber: true,
@@ -50,9 +50,10 @@ let app = new Vue({
                 showSeatNo: true,
                 showSex: true,
                 showSign: true,
+                tableStickersPerPageCount: 30,
             },
             table3: {
-                title1: "嘉兴市职业技能操作考试",
+                title1: "xxxxxxxxxx考试",
                 title2: "准考证",
                 showExamNumber: true,
                 showIdCard: true,
@@ -62,7 +63,7 @@ let app = new Vue({
                 ticketColCount: 2,
             },
             table4: {
-                title1: "嘉兴市职业技能操作考试",
+                title1: "xxxxxxxxxx考试",
                 title2: "准考证",
                 showExamNumber: true,
                 showIdCard: true,

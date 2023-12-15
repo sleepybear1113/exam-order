@@ -18,7 +18,7 @@
     }
 
     .check-caption {
-        font-size: 25px;
+        font-size: 18px;
         font-family: 黑体, serif;
     }
 
@@ -71,7 +71,7 @@
     }
 
     .table-title {
-        font-size: 28px;
+        font-size: 22px;
         margin: 10px;
         font-family: 黑体, serif;
     }
@@ -367,6 +367,11 @@
                     第二行标题<input v-model="tableConfig.table2.title2" style="width: 300px;">
                 </label>
                 <br/>
+                <label>
+                    每页数量：
+                    <input v-model="tableConfig.table2.tableStickersPerPageCount" type="number" class="number-input">
+                </label>
+                <br/>
                 <button @click="tableConfig.table2.showNumber = !tableConfig.table2.showNumber">
                     显示/隐藏序号(已{{toShowHideStr(tableConfig.table2.showNumber)}})
                 </button>
@@ -394,50 +399,53 @@
 
             <!--科目下的单个试场-->
             <template v-for="(room, index) in allExamInfo.rooms">
-                <div style="line-height: 1px">&nbsp;</div>
-                <table>
-                    <caption>
-                        <div style="margin-bottom: 8px;">
-                            <p v-if="tableConfig.table2.title1" class="table-title">{{tableConfig.table2.title1}}</p>
-                            <p v-if="tableConfig.table2.title2" class="table-title">{{tableConfig.table2.title2}}</p>
-                            <!--考点-科目-试场号-->
-                            <span class="check-caption" style="float: left">
-                                            考点：{{room.examPlaceName}}
+                <template v-for="row in Math.ceil(room.persons.length / tableConfig.table2.tableStickersPerPageCount)">
+                    <div style="line-height: 1px">&nbsp;</div>
+                    <table>
+                        <caption>
+                            <div style="margin-bottom: 8px;">
+                                <p v-if="tableConfig.table2.title1" class="table-title">{{tableConfig.table2.title1}}</p>
+                                <p v-if="tableConfig.table2.title2" class="table-title">{{tableConfig.table2.title2}}</p>
+                                <!--考点-科目-试场号-->
+                                <span class="check-caption" style="float: left">
+                                            学校：{{room.examPlaceName}}
                                         </span>
-                            <span class="check-caption">
-                                            {{room.subjectName}}({{room.subjectType}})
+                                <span class="check-caption">
+                                            教师签名：{{room.subjectName}}
                                         </span>
-                            <span class="check-caption" style="float: right">
-                                            试场：{{room.roomName}}
+                                <span class="check-caption" style="float: right">
+                                            考试科目：{{room.roomName}}
                                         </span>
-                        </div>
-                    </caption>
-                    <thead>
-                    <tr>
-                        <td v-if="tableConfig.table2.showNumber">序号</td>
-                        <td v-if="tableConfig.table2.showExamNumber">考生号</td>
-                        <td v-if="tableConfig.table2.showName">姓名</td>
-                        <td v-if="tableConfig.table2.showIdCard">证件号码</td>
-                        <td v-if="tableConfig.table2.showSex">性别</td>
-                        <td v-if="tableConfig.table2.showSeatNo">座位号</td>
-                        <td v-if="tableConfig.table2.showSign">签名</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <template v-for="(person, index) in room.persons">
+                            </div>
+                        </caption>
+                        <thead>
                         <tr>
-                            <td v-if="tableConfig.table2.showNumber">{{index + 1}}</td>
-                            <td v-if="tableConfig.table2.showExamNumber">{{person.examNumber}}</td>
-                            <td v-if="tableConfig.table2.showName">{{person.name}}</td>
-                            <td v-if="tableConfig.table2.showIdCard">{{person.idCard}}</td>
-                            <td v-if="tableConfig.table2.showSex">{{person.sex}}</td>
-                            <td v-if="tableConfig.table2.showSeatNo">{{person.seatNo}}</td>
-                            <td v-if="tableConfig.table2.showSign" style="min-width: 100px"></td>
+                            <td v-if="tableConfig.table2.showNumber">序号</td>
+                            <td v-if="tableConfig.table2.showExamNumber">考生号</td>
+                            <td v-if="tableConfig.table2.showName">姓名</td>
+                            <td v-if="tableConfig.table2.showIdCard">班级</td>
+                            <td v-if="tableConfig.table2.showSex">性别</td>
+                            <td v-if="tableConfig.table2.showSeatNo">座位号</td>
+                            <td v-if="tableConfig.table2.showSign">手机是否上交<br/>（如未上交，请注明原因）</td>
                         </tr>
-                    </template>
-                    </tbody>
-                </table>
-                <div style="page-break-after:always;"></div>
+                        </thead>
+                        <tbody>
+                        <template v-for="(person, col) in room.persons.slice((row - 1) * tableConfig.table2.tableStickersPerPageCount, row * tableConfig.table2.tableStickersPerPageCount)">
+                            <tr>
+                                <td v-if="tableConfig.table2.showNumber">{{((row - 1) * tableConfig.table2.tableStickersPerPageCount) + 1 + col}}</td>
+                                <td v-if="tableConfig.table2.showExamNumber">{{person.examNumber}}</td>
+                                <td v-if="tableConfig.table2.showName">{{person.name}}</td>
+                                <td v-if="tableConfig.table2.showIdCard">{{person.idCard}}</td>
+                                <td v-if="tableConfig.table2.showSex">{{person.sex}}</td>
+                                <td v-if="tableConfig.table2.showSeatNo">{{person.seatNo}}</td>
+                                <td v-if="tableConfig.table2.showSign" style="min-width: 100px"></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                    <div style="page-break-after:always;"></div>
+                </template>
+
             </template>
         </div>
 

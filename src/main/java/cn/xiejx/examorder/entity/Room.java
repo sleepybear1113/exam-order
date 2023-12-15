@@ -1,6 +1,7 @@
 package cn.xiejx.examorder.entity;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -34,9 +35,11 @@ public class Room implements Serializable {
 
     public static List<Room> build(List<ExamPlaceInfo> list) {
         List<Room> rooms = new ArrayList<>();
+        int count = 0;
         for (ExamPlaceInfo examPlaceInfo : list) {
             for (ExamRoomInfo examRoomInfo : examPlaceInfo.getList()) {
                 for (ExamRoomInfo roomInfo : examRoomInfo.getRoomList()) {
+                    count++;
                     Room room = new Room();
                     room.setId(roomInfo.getId());
                     room.setExamPlaceId(examPlaceInfo.getExamPlaceId());
@@ -47,7 +50,7 @@ public class Room implements Serializable {
                     room.setMaxCount(examRoomInfo.getMaxCount());
                     room.setRoomCountStr(examRoomInfo.getRoomCountStr());
                     room.setRoomCount(examRoomInfo.getRoomCount());
-                    room.setRoomName(examRoomInfo.getRoomName());
+                    room.setRoomName(StringUtils.isBlank(examRoomInfo.getRoomName()) ? String.format("%03d", count) : examRoomInfo.getRoomName());
                     room.setTime(examRoomInfo.getTime());
                     List<PersonInfo> persons = roomInfo.getPersons();
                     room.setPersons(persons);
