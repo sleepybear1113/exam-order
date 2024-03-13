@@ -134,24 +134,20 @@
                         </label>
 
                         <br/>
-                        <br/>
-                        <label>
-                            请输入考生照片链接地址
-                            <input v-model="picUrlPrefix" placeholder="请输入链接生成工具的链接">
-                            (选填，用于显示照片)
-                        </label>
-                        <br>
-                        <a>工具使用方式可以查看“使用说明”最下面。</a>
 
-                        <br/>
+                        <button @click="createInputUpload('pictures', false, true)">上传考生照片</button>
+                        <span v-if="Object.keys(picturesFilesMap).length > 0">
+                            <span>已选择图片数量：{{Object.keys(picturesFilesMap).length}}</span>
+                            <button @click="clearPictureFiles()">清空</button>
+                        </span>
                         <div style="display: none">
                             <div id="div-stu"></div>
                             <div id="div-room"></div>
+                            <div id="div-pictures"></div>
                         </div>
-                        <br/>
+                        <hr>
                         <button v-on:click="downloadUrl('files/考生信息Excel模板.xlsx')">考生信息Excel模板下载</button>
                         <button v-on:click="downloadUrl('files/试场场次Excel模板.xlsx')">考场安排Excel模板下载</button>
-                        <button v-on:click="downloadUrl('files/图片链接生成工具v1.0.zip')">链接生成工具下载</button>
                         <hr>
                     </div>
 
@@ -319,7 +315,7 @@
                             <template
                                     v-for="(person, col) in room.persons.slice((row - 1) * tableConfig.table1.colCount, row * tableConfig.table1.colCount)">
                                 <td>
-                                    <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt="" :width="imgWidth + 'px'"
+                                    <img :src="buildPicSrc(person.idCard, person.examNumber)" alt="" :width="imgWidth + 'px'"
                                          :height="imgHeight + 'px'"
                                          style="margin-right: 40px; margin-bottom: 0; margin-top: 12px;">
                                     <p v-if="tableConfig.table1.showExamNumber" class="info">{{person.examNumber}}</p>
@@ -528,7 +524,7 @@
 
                                 <div style="margin-right: 20px; width: 535px; float: left">
                                     <div style="float: right">
-                                        <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
+                                        <img :src="buildPicSrc(person.idCard, person.examNumber)" alt=""
                                              :height="ticketImgWidth * 1.4 + 'px'" style="margin-right: 40px;">
                                     </div>
                                     <div style="margin-right: 20px">
@@ -614,7 +610,7 @@
                         <td :style="ticketSingleTd" rowspan="4" v-if="tableConfig.table4.showTicketSinglePic">
                             <template>
                                 <div class="rrr">
-                                    <img :src="buildPicSrc(picUrlPrefix, person.idCard, person.examNumber)" alt=""
+                                    <img :src="buildPicSrc(person.idCard, person.examNumber)" alt=""
                                          :height="ticketImgWidth * 1.7 + 'px'">
                                 </div>
                             </template>

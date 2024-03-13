@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="file" id="folderInput" webkitdirectory accept="image/*" multiple>
+<div id="imageContainer"></div>
+
+<script>
+    document.getElementById('folderInput').addEventListener('change', handleFolderUpload);
+
+    function handleFolderUpload() {
+        const files = this.files;
+        const imageContainer = document.getElementById('imageContainer');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileType = file.type;
+
+            if (fileType.startsWith('image/')) {
+                const imageUrl = URL.createObjectURL(file);
+                console.log(file.name);
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'imageItem';
+                img.style.maxWidth = '200px';
+
+                imageContainer.appendChild(img);
+            }
+        }
+    }
+</script>
+</body>
+</html>
