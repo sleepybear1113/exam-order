@@ -75,7 +75,7 @@ public class ExamPlaceInfo {
                 List<PersonInfo> personList = subjectPersonInfoMap.get(subject);
                 roomIndex[0] = ExamRoomInfo.buildExamRoom(examRoomInfos, personList, roomIndex[0], random);
 
-                String examPlaceName = examRoomInfos.get(0).getExamPlaceName();
+                String examPlaceName = examRoomInfos.getFirst().getExamPlaceName();
                 examPlaceInfoList.add(new ExamPlaceInfo(examPlaceName, examPlaceId, examRoomInfos));
             }
         });
@@ -110,7 +110,7 @@ public class ExamPlaceInfo {
         }
 
         res.removeIf(examPlaceInfo -> CollectionUtils.isEmpty(examPlaceInfo.getList()));
-        res.sort(Comparator.comparingInt(o -> o.getList().get(0).getId()));
+        res.sort(Comparator.comparingInt(o -> o.getList().getFirst().getId()));
         return res;
     }
 

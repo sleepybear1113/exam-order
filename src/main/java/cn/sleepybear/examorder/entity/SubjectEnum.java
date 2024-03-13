@@ -1,5 +1,6 @@
 package cn.sleepybear.examorder.entity;
 
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author sleepybear
  * @date 2022/09/26 10:18
  */
+@Getter
 public enum SubjectEnum {
     /**
      * 类别
@@ -46,14 +48,6 @@ public enum SubjectEnum {
     SubjectEnum(String subjectTypeName, String subjectType) {
         this.subjectType = subjectType;
         this.subjectTypeName = subjectTypeName;
-    }
-
-    public String getSubjectType() {
-        return subjectType;
-    }
-
-    public String getSubjectTypeName() {
-        return subjectTypeName;
     }
 
     public static String getTypeName(String type) {

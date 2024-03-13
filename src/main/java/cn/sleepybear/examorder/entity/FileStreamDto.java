@@ -31,10 +31,10 @@ public class FileStreamDto implements Serializable {
     public FileStreamDto() {
     }
 
-    public boolean setByteArrayInputStream(InputStream inputStream) {
+    public void setByteArrayInputStream(InputStream inputStream) {
         if (inputStream == null) {
             log.info("input stream is null!");
-            return false;
+            return;
         }
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -47,36 +47,30 @@ public class FileStreamDto implements Serializable {
             b.flush();
             this.bytes = b.toByteArray();
             this.createTime = System.currentTimeMillis();
-            return true;
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
             this.errorMessage = e.getMessage();
-            return false;
         }
     }
 
-    public boolean setByteArrayInputStream(MultipartFile multipartFile) {
+    public void setByteArrayInputStream(MultipartFile multipartFile) {
         try {
             setByteArrayInputStream(multipartFile.getInputStream());
             this.originalFilename = multipartFile.getOriginalFilename();
-            return true;
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
             this.errorMessage = e.getMessage();
-            return false;
         }
     }
 
-    public boolean setByteArrayInputStream(File file) {
+    public void setByteArrayInputStream(File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             setByteArrayInputStream(fileInputStream);
             this.localFile = true;
             this.originalFilename = file.getName();
-            return true;
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
             this.errorMessage = e.getMessage();
-            return false;
         }
     }
 
