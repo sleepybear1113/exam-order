@@ -13,7 +13,7 @@ let app = new Vue({
         examTime: "",
         ticketImgWidth: 120,
         ticketRow: 0,
-        picUrlPrefix: null,
+        picturesFilesMap: {},
         dataId: {
             personInfoKey: "",
             personInfoId: null,
@@ -81,20 +81,24 @@ let app = new Vue({
         this.picHost = window.location.origin;
     },
     methods: {
-        createInputUpload(inputId) {
+        createInputUpload(inputId, multiple = false, webkitdirectory = false) {
             let parentDiv = document.getElementById("div-" + inputId);
-
             while (parentDiv.firstChild) {
                 parentDiv.removeChild(parentDiv.firstChild);
             }
 
             let inputElement = document.createElement("input");
-
-            let id = "input-" + inputId + "-" + parseInt(Math.random() * 100000);
+            let id = "input-" + inputId + "-" + parseInt(String(Math.random() * 100000));
 
             inputElement.setAttribute("type", "file");
             inputElement.setAttribute("id", id);
             inputElement.setAttribute("accept", ".xls,.xlsx");
+            if (multiple) {
+                inputElement.setAttribute("multiple", "multiple");
+            }
+            if (webkitdirectory) {
+                inputElement.setAttribute("webkitdirectory", "webkitdirectory");
+            }
 
             if (inputId === "stu") {
                 inputElement.addEventListener("change", this.uploadStu);
@@ -102,6 +106,8 @@ let app = new Vue({
             } else if (inputId === "room") {
                 inputElement.addEventListener("change", this.uploadRoom);
                 this.dataId.placeSubjectRoomInfoId = id;
+            } else if (inputId === "pictures") {
+                inputElement.addEventListener("change", this.uploadPictures);
             }
 
             parentDiv.appendChild(inputElement);
@@ -160,18 +166,43 @@ let app = new Vue({
                 alert("上传失败，请选择其他文件");
             });
         },
-        buildPicSrc(urlPrefix, idCard, examNumber) {
-            let arr = [];
-            if (idCard) {
-                arr.push(idCard);
+        uploadPictures(event) {
+            const files = event.target.files;
+            if (!files) {
+                return;
             }
-            if (examNumber) {
-                arr.push(examNumber);
+
+            this.picturesFilesMap = {};
+            for (let file of files) {
+                // 将图片类型的 file 放入 picturesFilesMap 中，并以无后缀的文件名为 key
+                if (file.type.startsWith("image")) {
+                    let key = file.name.split(".")[0];
+                    this.picturesFilesMap[key.toUpperCase()] = file;
+                }
             }
-            if (arr.length === 0 || !urlPrefix || !urlPrefix.startsWith("http")) {
+        },
+        clearPictureFiles() {
+            this.picturesFilesMap = {};
+        },
+        buildPicSrc(idCard, examNumber) {
+            if (!idCard) {
+                idCard = "";
+            }
+            if (!examNumber) {
+                examNumber = "";
+            }
+            idCard = idCard.toUpperCase();
+            examNumber = examNumber.toUpperCase();
+
+            if (Object.keys(this.picturesFilesMap).length === 0) {
                 return "/exam-order/empty-photo.png";
             }
-            return urlPrefix + (urlPrefix.endsWith("/") ? "" : "/") + "getPic?filenameNoEx=" + arr.join("***");
+
+            let pictureFile = this.picturesFilesMap[idCard] || this.picturesFilesMap[examNumber];
+            if (!pictureFile) {
+                return "/exam-order/empty-photo.png";
+            }
+            return URL.createObjectURL(pictureFile);
         },
         processStu(fileStreamDtoId) {
             let url = "/process/process";
