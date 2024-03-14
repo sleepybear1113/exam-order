@@ -22,6 +22,12 @@ public class ReadPersonInfo implements Serializable {
     private Integer personCount;
     private List<String> validList;
 
+    /**
+     * 复制 ReadPersonInfo 对象，可选择是否复制 personInfoList
+     *
+     * @param copyPersonInfoList 是否复制 personInfoList，true 表示复制，false 表示不复制
+     * @return 返回复制后的 ReadPersonInfo 对象
+     */
     public ReadPersonInfo copy(boolean copyPersonInfoList) {
         ReadPersonInfo readPersonInfo = new ReadPersonInfo();
         readPersonInfo.setKey(this.key);

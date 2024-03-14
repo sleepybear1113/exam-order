@@ -130,8 +130,17 @@ public class ExamRoomInfo {
         this.roomNoList = List.of(roomName.replace("，", ",").split(","));
     }
 
+    /**
+     * 清除无效的考场名称<br/>
+     *
+     * 如果考场编号列表为空，说明没有填写考场编号，那么则直接返回<br/>
+     * 否则，将考场编号列表去除重复<br/>
+     * 如果去重后的考场编号列表长度等于考场数量，则直接返回，说明手动设置的编号与数量一一对应<br/>
+     * 如果考场数量大于考场编号列表长度，则将考场编号列表置为空，后续将自动编号<br/>
+     * 否则，将考场编号列表截取到考场数量长度
+     */
     public void clearInvalidRoomName() {
-        if (CollectionUtils.isEmpty(this.roomNoList) || this.roomCount == null) {
+        if (CollectionUtils.isEmpty(this.roomNoList)) {
             return;
         }
         this.roomNoList = new ArrayList<>(new HashSet<>(this.roomNoList));
