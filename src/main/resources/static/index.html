@@ -126,7 +126,8 @@
                             <input placeholder="未选择文件" v-model="dataId.personInfoKeyFilename" disabled>
                         </label>
                         <br/>
-                        <span v-if="dataId.personCount">{{"已解析考生数:" + dataId.personCount}}</span>
+                        <span v-if="dataId.personCount > 0">{{"已解析考生数:" + dataId.personCount}}</span>
+                        <span v-if="dataId.personCount === -1">上传解析中...</span>
 
                         <br/>
 
@@ -135,11 +136,12 @@
                             <input placeholder="未选择文件" v-model="dataId.placeSubjectRoomInfoKeyFilename" disabled>
                         </label>
                         <br/>
-                        <span v-if="dataId.examSubjectCount">{{"已解析考场数:" + dataId.examSubjectCount}}</span>
+                        <span v-if="dataId.examSubjectCount > 0">{{"已解析考场数:" + dataId.examSubjectCount}}</span>
+                        <span v-if="dataId.examSubjectCount === -1">上传解析中...</span>
 
                         <br/>
 
-                        <button @click="createInputUpload('pictures', false, true)">上传考生照片</button>
+                        <button @click="createInputUpload('pictures', false, true)">选择考生照片</button>
                         <span v-if="Object.keys(picturesFilesMap).length > 0">
                             <span>已选择图片数量：{{Object.keys(picturesFilesMap).length}}</span>
                             <button @click="clearPictureFiles()">清空</button>

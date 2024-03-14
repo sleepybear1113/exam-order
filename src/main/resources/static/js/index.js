@@ -137,8 +137,10 @@ let app = new Vue({
             }
             if (type === 1) {
                 this.dataId.personInfoKeyFilename = file.name;
+                this.dataId.personCount = -1;
             } else if (type === 2) {
                 this.dataId.placeSubjectRoomInfoKeyFilename = file.name;
+                this.dataId.examSubjectCount = -1;
             }
             const formData = new FormData();
             formData.append("file", file);
@@ -166,6 +168,11 @@ let app = new Vue({
             }).catch(err => {
                 // 出现错误时的处理
                 alert("上传失败，请选择其他文件");
+                if (type === 1) {
+                    this.dataId.personCount = null;
+                } else if (type === 2) {
+                    this.dataId.examSubjectCount = null;
+                }
             });
         },
         uploadPictures(event) {
@@ -175,14 +182,22 @@ let app = new Vue({
             }
 
             this.picturesFilesMap = {};
-            for (let file of files) {
-                // 将图片类型的 file 放入 picturesFilesMap 中，并以无后缀的文件名为 key
-                if (file.type.startsWith("image")) {
-                    let key = file.name.split(".")[0];
-                    file.srcUrl = URL.createObjectURL(file);
-                    this.picturesFilesMap[key.toUpperCase()] = file;
+
+            // 递归函数来处理文件夹中嵌套的文件
+            const processFiles = (fileList) => {
+                for (let file of fileList) {
+                    if (file.type.startsWith("image")) {
+                        let key = file.name.split(".")[0];
+                        file.srcUrl = URL.createObjectURL(file);
+                        this.picturesFilesMap[key.toUpperCase()] = file;
+                    } else if (file.isDirectory) {
+                        processFiles(file);
+                    }
                 }
-            }
+            };
+
+            // 初始调用递归函数处理文件
+            processFiles(files);
         },
         clearPictureFiles() {
             this.picturesFilesMap = {};
@@ -230,6 +245,7 @@ let app = new Vue({
                             this.dataId.personCount = readPersonInfo.personCount;
                         } else {
                             this.dataId.personInfoKeyFilename = "";
+                            this.dataId.personCount = null;
                             alert("上传的文件有信息错误！" + readPersonInfo.validList.join("\n"));
                         }
                     }
@@ -255,7 +271,6 @@ let app = new Vue({
                         alert("???");
                         return;
                     }
-                    console.log(readRoomInfo);
                     this.dataId.placeSubjectRoomInfoKey = readRoomInfo.key;
                     this.dataId.examSubjectCount = readRoomInfo.examSubjectCount;
                 });
