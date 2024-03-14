@@ -125,6 +125,8 @@
                         <label>
                             <input placeholder="未选择文件" v-model="dataId.personInfoKeyFilename" disabled>
                         </label>
+                        <br/>
+                        <span v-if="dataId.personCount">{{"已解析考生数:" + dataId.personCount}}</span>
 
                         <br/>
 
@@ -132,6 +134,8 @@
                         <label>
                             <input placeholder="未选择文件" v-model="dataId.placeSubjectRoomInfoKeyFilename" disabled>
                         </label>
+                        <br/>
+                        <span v-if="dataId.examSubjectCount">{{"已解析考场数:" + dataId.examSubjectCount}}</span>
 
                         <br/>
 
@@ -152,7 +156,6 @@
                     </div>
 
                     <div style="margin-top: 30px">
-                        <br/>
                         <a href="intro.html" target="_blank">>>>点击此处查看使用说明<<<</a>
                         <br/>
                         <br/>

@@ -18,10 +18,12 @@ let app = new Vue({
             personInfoKey: "",
             personInfoId: null,
             personInfoKeyFilename: "",
+            personCount: "",
 
             placeSubjectRoomInfoId: null,
             placeSubjectRoomInfoKey: "",
             placeSubjectRoomInfoKeyFilename: "",
+            examSubjectCount: "",
         },
         ticketSingleTd: {
             border: "1px solid black",
@@ -177,6 +179,7 @@ let app = new Vue({
                 // 将图片类型的 file 放入 picturesFilesMap 中，并以无后缀的文件名为 key
                 if (file.type.startsWith("image")) {
                     let key = file.name.split(".")[0];
+                    file.srcUrl = URL.createObjectURL(file);
                     this.picturesFilesMap[key.toUpperCase()] = file;
                 }
             }
@@ -202,7 +205,7 @@ let app = new Vue({
             if (!pictureFile) {
                 return "/exam-order/empty-photo.png";
             }
-            return URL.createObjectURL(pictureFile);
+            return pictureFile.srcUrl;
         },
         processStu(fileStreamDtoId) {
             let url = "/process/process";
@@ -224,6 +227,7 @@ let app = new Vue({
                     if (readPersonInfo.validList) {
                         if (readPersonInfo.validList[0] === "true") {
                             this.dataId.personInfoKey = readPersonInfo.key;
+                            this.dataId.personCount = readPersonInfo.personCount;
                         } else {
                             this.dataId.personInfoKeyFilename = "";
                             alert("上传的文件有信息错误！" + readPersonInfo.validList.join("\n"));
@@ -253,6 +257,7 @@ let app = new Vue({
                     }
                     console.log(readRoomInfo);
                     this.dataId.placeSubjectRoomInfoKey = readRoomInfo.key;
+                    this.dataId.examSubjectCount = readRoomInfo.examSubjectCount;
                 });
             });
         },

@@ -30,6 +30,10 @@ public class ReadRoomInfo implements Serializable {
     public ReadRoomInfo copy(boolean copyMapMap) {
         ReadRoomInfo readRoomInfo = new ReadRoomInfo();
         readRoomInfo.setKey(this.key);
+        readRoomInfo.setLines(this.lines);
+        readRoomInfo.setExamPlaceCount(this.examPlaceCount);
+        readRoomInfo.setExamSubjectCount(this.examSubjectCount);
+        readRoomInfo.setExamRoomCount(this.examRoomCount);
         if (copyMapMap) {
             readRoomInfo.setMapMap(this.mapMap);
         }

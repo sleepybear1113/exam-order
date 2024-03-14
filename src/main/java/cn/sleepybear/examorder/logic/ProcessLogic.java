@@ -29,6 +29,7 @@ public class ProcessLogic {
         ReadPersonInfo readPersonInfo = new ReadPersonInfo();
         readPersonInfo.setKey(key);
         readPersonInfo.setPersonInfoList(personInfoList);
+        readPersonInfo.setPersonCount(CollectionUtils.size(personInfoList));
         readPersonInfo.setValidList(valid);
 
         Constants.READ_PERSON_INFO_CACHER.put(key, readPersonInfo);
@@ -45,7 +46,6 @@ public class ProcessLogic {
 
         String key = Util.getRandomStr(8);
         HashMap<String, Map<String, List<ExamRoomInfo>>> map = new HashMap<>();
-        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, ReadRoomInfo.buildFromMap(key, map));
 
         for (ExamRoomInfo examRoomInfo : examRoomInfoInfoList) {
             String examPlaceId = examRoomInfo.getExamPlaceId();
@@ -70,6 +70,7 @@ public class ProcessLogic {
             }
         }
 
+        Constants.EXAM_ROOM_INFO_MAP_CACHER.put(key, ReadRoomInfo.buildFromMap(key, map));
         return key;
     }
 }

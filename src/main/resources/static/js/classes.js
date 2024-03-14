@@ -104,6 +104,7 @@ class Room {
 class ReadPersonInfo {
     constructor(props = {}) {
         this.key = props.key;
+        this.personCount = props.personCount;
         this.validList = props.validList ? props.validList.map(item => item) : [];
     }
 }
