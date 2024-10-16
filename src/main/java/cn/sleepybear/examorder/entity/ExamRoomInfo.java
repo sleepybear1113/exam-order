@@ -22,6 +22,7 @@ import java.util.*;
 @AllArgsConstructor
 public class ExamRoomInfo {
     public static final String OPTION_BLANK = "#选填";
+    public static final int DEFAULT_ROOM_COUNT = 100;
 
     @ExcelIgnore
     private Integer id;
@@ -105,20 +106,28 @@ public class ExamRoomInfo {
         return String.valueOf(maxCount);
     }
 
+    public Integer getRoomCount() {
+        if (this.roomCount == null) {
+            this.roomCount = DEFAULT_ROOM_COUNT;
+            return DEFAULT_ROOM_COUNT;
+        }
+        return roomCount;
+    }
+
     public void setRoomCountStr(String roomCount) {
         if (StringUtils.isBlank(roomCount) || roomCount.startsWith(OPTION_BLANK)) {
-            this.roomCount = 100;
+            this.roomCount = DEFAULT_ROOM_COUNT;
             return;
         }
         if (!StringUtils.isNumeric(roomCount)) {
-            this.roomCount = 100;
+            this.roomCount = DEFAULT_ROOM_COUNT;
             return;
         }
         this.roomCount = Integer.valueOf(roomCount);
     }
 
     public String getRoomCountStr() {
-        return String.valueOf(roomCount);
+        return String.valueOf(getRoomCount());
     }
 
     public void setRoomName(String roomName) {
@@ -132,7 +141,7 @@ public class ExamRoomInfo {
 
     /**
      * 清除无效的考场名称<br/>
-     *
+     * <p>
      * 如果考场编号列表为空，说明没有填写考场编号，那么则直接返回<br/>
      * 否则，将考场编号列表去除重复<br/>
      * 如果去重后的考场编号列表长度等于考场数量，则直接返回，说明手动设置的编号与数量一一对应<br/>
@@ -144,7 +153,7 @@ public class ExamRoomInfo {
             return;
         }
         this.roomNoList = new ArrayList<>(new HashSet<>(this.roomNoList));
-        if (this.roomNoList.size() == this.roomCount) {
+        if (this.roomNoList.size() == getRoomCount()) {
             return;
         }
         if (this.roomCount > this.roomNoList.size()) {

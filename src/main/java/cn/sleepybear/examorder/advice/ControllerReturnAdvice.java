@@ -37,13 +37,13 @@ public class ControllerReturnAdvice implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(value = FrontException.class)
     public <T> ResultCode<T> handlerGlobeMyException(HttpServletRequest request, FrontException exception) {
-        log.warn("用户错误：" + exception.getMessage());
+        log.warn("用户错误：{}", exception.getMessage());
         return new ResultCode<>(ResultCodeConstant.CodeEnum.COMMON_ERROR.getCode(), exception.getMessage(), null);
     }
 
     @ExceptionHandler(value = Exception.class)
     public <T> ResultCode<T> handlerGlobeException(HttpServletRequest request, Exception exception) {
-        log.error("系统错误：" + exception.getMessage(), exception);
+        log.error("系统错误：{}", exception.getMessage(), exception);
         return new ResultCode<>(ResultCodeConstant.CodeEnum.SYSTEM_ERROR.getCode(), exception.getMessage(), null);
     }
 }
